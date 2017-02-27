@@ -27,6 +27,26 @@ export function loggedIn(current_user) {
     }
 }
 
+export function saveSettingsInit() {
+    return {
+        type: types.SAVING_SETTINGS
+    }
+}
+
+export function savedSettings(current_user) {
+    return {
+        type: types.SAVED_SETTINGS,
+        current_user
+    }
+}
+
+export function saveSettingsErrors(errors) {
+    return {
+        type: types.SAVE_SETTINGS_ERRORS,
+        errors
+    }
+}
+
 export function upgradeInit() {
     return {
         type: types.UPGRADING
@@ -47,12 +67,38 @@ export function upgradeErrors(error){
     }
 }
 
+export function saveSettings({
+    email,
+    frequency
+}) {
+    return (dispatch, getState) => {
+
+        dispatch(saveSettingsInit())
+
+        return fetch('users/update', {
+                body: {
+                    email,
+                    frequency
+                }
+            })
+            .then(json => {
+                if(json.error){
+                    return dispatch(saveSettingsErrors(json.error))
+                }
+                if(json.user){
+                    dispatch(savedSettings(json.user))
+                    toastr.success('All done', 'Your settings have been saved.')
+                }
+            })
+    }
+}
+
 export function upgrade(stripeToken) {
     return (dispatch, getState) => {
 
         dispatch(upgradeInit())
 
-        return fetch('api/users/upgrade', {
+        return fetch('users/upgrade', {
                 body: {
                     stripe_token_id: stripeToken,
                     plan_id: planId

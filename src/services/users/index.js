@@ -23,6 +23,17 @@ class Users {
         })
         return user
     }
+    async updateSettings(id, email, frequency) {
+        const updated = await this.db.update({
+            email,
+            frequency
+        }, {
+            where: {
+                id
+            }
+        })
+        return await this.getById(id)
+    }
     async createUser({
         screen_name,
         id_str,

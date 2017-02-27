@@ -4,7 +4,10 @@ import {
     LOGGED_IN,
     UPGRADED,
     UPGRADING,
-    UPGRADE_ERROR
+    UPGRADE_ERROR,
+    SAVING_SETTINGS,
+    SAVED_SETTINGS,
+    SAVE_SETTINGS_ERRORS
 }
 from '../constants/action-types'
 
@@ -15,7 +18,9 @@ const initialState = {
     logging_in: false,
     current_user: config.LOGGED_IN || null,
     upgrade_error: {},
-    upgrading: false
+    upgrading: false,
+    saving_settings: false,
+    save_settings_errors: {}
 }
 
 export default function authState(state = initialState, action) {
@@ -33,6 +38,20 @@ export default function authState(state = initialState, action) {
                 logged_in: true,
                 logging_in: false,
                 current_user: action.current_user
+            })
+        case SAVING_SETTINGS:
+            return Object.assign({}, state, {
+                saving_settings: true
+            })
+        case SAVED_SETTINGS:
+            return Object.assign({}, state, {
+                saving_settings: false,
+                current_user: action.current_user
+            })
+        case SAVE_SETTINGS_ERRORS:
+            return Object.assign({}, state, {
+                saving_settings: false,
+                save_settings_errors: action.errors
             })
         case UPGRADING:
             return Object.assign({}, state, {

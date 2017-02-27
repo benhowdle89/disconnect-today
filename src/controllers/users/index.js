@@ -9,6 +9,6 @@ export default {
     '/api/users/sign-up': signUp,
     '/api/users/login': login,
     '/api/users/upgrade': stripe.upgrade,
+    '/api/users/update': update,
     '/api/users/cancel': cancel,
-    '/api/users/twitter-connect': update.twitter
 }
