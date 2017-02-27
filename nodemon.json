@@ -1,0 +1,13 @@
+{
+  "restartable": "rs",
+  "ignore": [
+    ".git",
+    "node_modules/**/node_modules"
+  ],
+  "verbose": true,
+  "execMap": {
+    "js": "babel-node src/server.js --harmony_default_parameters"
+  },
+  "delay": 1000,
+  "ext": "js json"
+}

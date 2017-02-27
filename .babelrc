@@ -1,0 +1,14 @@
+{
+  "presets": ["es2015", "react", "stage-0"],
+  "plugins": [
+      "transform-object-assign",
+      "add-module-exports",
+      "syntax-async-functions",
+      "transform-regenerator",
+      "transform-object-assign",
+      "transform-runtime",
+      [
+          "inline-dotenv", { silent: true }
+      ],
+  ]
+}
