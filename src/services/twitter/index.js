@@ -10,6 +10,30 @@ class TwitterService {
             callback
         })
     }
+    async getDMs({
+        accessToken,
+        accessTokenSecret
+    }) {
+        return new Promise(async resolve => {
+            this.connection().direct_messages("", {
+                count: 200
+            }, accessToken, accessTokenSecret, (error, data, response) => {
+                resolve(data.map(dm => {
+                    return {
+                        from: {
+                            name: dm.sender_screen_name,
+                            avatar: dm.sender.profile_image_url
+                        },
+                        text: dm.text,
+                        created_at: dm.created_at
+                    }
+                }))
+            })
+        })
+    }
+    getMentions() {
+
+    }
 }
 
 export default TwitterService

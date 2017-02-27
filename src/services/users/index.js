@@ -15,6 +15,9 @@ class Users {
         const user = await this.db.findById(id)
         return user
     }
+    async getAll() {
+        return await this.db.findAll()
+    }
     async getByTwitterUserId(id) {
         const user = await this.db.findOne({
             where: {
