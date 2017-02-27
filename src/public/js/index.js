@@ -180,6 +180,18 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
+var _reactRouter = require('react-router');
+
+var _redux = require('redux');
+
+var _reactRedux = require('react-redux');
+
+var _auth = require('./../../actions/auth');
+
+var authActions = _interopRequireWildcard(_auth);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Home = function (_React$Component) {
@@ -200,6 +212,11 @@ var Home = function (_React$Component) {
                     'h1',
                     null,
                     'Disconnect Today'
+                ),
+                _react2.default.createElement(
+                    'a',
+                    { href: '/api/twitter-connect' },
+                    'Sign in with Twitter'
                 )
             );
         }
@@ -207,10 +224,22 @@ var Home = function (_React$Component) {
     return Home;
 }(_react2.default.Component);
 
-exports.default = Home;
+function mapStateToProps(state) {
+    return {
+        authState: state.authState
+    };
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+        authActions: (0, _redux.bindActionCreators)(authActions, dispatch)
+    };
+}
+
+exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Home);
 module.exports = exports['default'];
 
-},{"babel-runtime/core-js/object/get-prototype-of":16,"babel-runtime/helpers/classCallCheck":20,"babel-runtime/helpers/createClass":21,"babel-runtime/helpers/inherits":23,"babel-runtime/helpers/possibleConstructorReturn":24,"react":384}],5:[function(require,module,exports){
+},{"./../../actions/auth":1,"babel-runtime/core-js/object/get-prototype-of":16,"babel-runtime/helpers/classCallCheck":20,"babel-runtime/helpers/createClass":21,"babel-runtime/helpers/inherits":23,"babel-runtime/helpers/possibleConstructorReturn":24,"react":384,"react-redux":283,"react-router":332,"redux":396}],5:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -354,17 +383,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 require('es6-promise').polyfill();
 
 
-var authPaths = ['dashboard', 'login', 'sign-up', 'themes', 'settings'];
-
-var API_URL = config.API_URL;
-
-var inApp = function inApp() {
-    var path = window.location.pathname.split('/').pop();
-    if (!path) {
-        return false;
-    }
-    return path.match(new RegExp(authPaths.join('|')));
-};
+var API_URL = '/api/';
 
 var fetch = exports.fetch = function fetch(url) {
     var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
@@ -399,8 +418,8 @@ var fetch = exports.fetch = function fetch(url) {
         if (res.status == 500) {
             throw new Error(res.response.data.error);
         }
-        if (res.status == 403 && inApp()) {
-            _reactRouter.browserHistory.push('/login');
+        if (res.status == 403) {
+            _reactRouter.browserHistory.push('/');
             _store2.default.clear();
             return _reactReduxToastr.toastr.error('Sorry', res.response.data.error);
         }
@@ -416,7 +435,7 @@ var fetch = exports.fetch = function fetch(url) {
         return data || {};
     }).catch(function (error) {
         console.error(error);
-        inApp() && _reactReduxToastr.toastr.error('Sorry', 'Something bad happened');
+        _reactReduxToastr.toastr.error('Sorry', 'Something bad happened');
         throw new Error(error);
     });
 };

@@ -10,6 +10,8 @@ import router from './etc/router'
 import compression from 'compression'
 import cookieParser from 'cookie-parser'
 import userFromToken from './etc/user-from-token'
+import TwitterConnect from './controllers/twitter/connect'
+import TwitterCallback from './controllers/twitter/callback'
 
 const app = express()
 
@@ -31,7 +33,6 @@ app.use((req, res, next) => {
 
 const renderIndex = (res, loggedIn) => {
     res.render('index', {
-        API_URL: process.env.API_URL,
         NODE_ENV: process.env.NODE_ENV,
         STRIPE_TOKEN: process.env.STRIPE_TOKEN,
         LOGGED_IN: loggedIn
@@ -50,8 +51,19 @@ const render = async (res, authToken, req) => {
     }
 }
 
-app.use('*', (req, res, next) => {
+app.use('*', async (req, res, next) => {
     const url = req.originalUrl
+    if(url.match(/twitter-connect/)) {
+        return TwitterConnect(req, res)
+    }
+    if(url.match(/twitter-callback/)) {
+        const result = await TwitterCallback(req, res)
+        res.cookie('auth-token', result.data.user.token, {
+            expires: new Date(Date.now() + 9999999),
+            httpOnly: false
+        })
+        return res.redirect('/dashboard')
+    }
     if(!(url.match(/api/))) {
         const authToken = req.cookies['auth-token'] || null
         return render(res, authToken, req)

@@ -4,17 +4,7 @@ import fetchAPI from 'isomorphic-fetch'
 import {browserHistory} from 'react-router'
 import { toastr } from 'react-redux-toastr'
 
-const authPaths = ['dashboard', 'login', 'sign-up', 'themes', 'settings']
-
-const API_URL = config.API_URL
-
-const inApp = () => {
-    let path = window.location.pathname.split('/').pop()
-    if(!path){
-        return false
-    }
-    return path.match(new RegExp(authPaths.join('|')))
-}
+const API_URL = '/api/'
 
 export const fetch = (url, opts = {}) => {
     let token = store.get('auth-token'),
@@ -47,8 +37,8 @@ export const fetch = (url, opts = {}) => {
         if(res.status == 500){
             throw new Error(res.response.data.error)
         }
-        if(res.status == 403 && inApp()){
-            browserHistory.push('/login')
+        if(res.status == 403){
+            browserHistory.push('/')
             store.clear()
             return toastr.error('Sorry', res.response.data.error)
         }
@@ -63,7 +53,7 @@ export const fetch = (url, opts = {}) => {
         return data || {}
     }).catch(error => {
         console.error(error)
-        inApp() && toastr.error('Sorry', 'Something bad happened')
+        toastr.error('Sorry', 'Something bad happened')
         throw new Error(error)
     })
 }
