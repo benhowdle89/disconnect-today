@@ -1,0 +1,41 @@
+doctype html
+html
+  head
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+    meta(name='description', content='Create your business website in seconds, using your Facebook page')
+    title Ekko - Create your business website in seconds, using your Facebook page
+    link(href='/css/app.css', rel='stylesheet')
+
+    meta(name='twitter:card', content='summary_large_image')
+    meta(name='twitter:site', content='@ekkosite')
+    meta(name='twitter:creator', content='@benhowdle')
+    meta(name='twitter:title', content='Ekko - Create your business website in seconds, using your Facebook page')
+    meta(name='twitter:description', content="Ekko is a service that allows people to create business websites using only their Facebook Page. Once they connect their Facebook Page to Ekko, we host the website and update the content every time they update their Facebook Page. There's no HTML or CSS to worry about, users can pick from a great selection of themes for their website. In 45 seconds, you can sign up and have your site online, and never have to touch it again. We offer free domains with annual plans, with SSL & WHOIS privacy included.")
+    meta(name='twitter:image', content='https://ekko.site/dist/images/twitter-card.png')
+
+    meta(property='og:title', content='Ekko - Create your business website in seconds, using your Facebook page')
+    meta(property='og:description', content="Ekko is a service that allows people to create business websites using only their Facebook Page. Once they connect their Facebook Page to Ekko, we host the website and update the content every time they update their Facebook Page. There's no HTML or CSS to worry about, users can pick from a great selection of themes for their website. In 45 seconds, you can sign up and have your site online, and never have to touch it again. We offer free domains with annual plans, with SSL & WHOIS privacy included.")
+    meta(property='og:image', content='https://ekko.site/dist/images/fb-og.png')
+    meta(property='og:url', content='https://ekko.site')
+    meta(property='og:image:type' content='image/png')
+    meta(property='og:image:width' content='2400')
+    meta(property='og:image:height' content='1260')
+
+  body
+    #app
+    script.
+      var config = {
+          NODE_ENV: "!{NODE_ENV}",
+          STRIPE_TOKEN: "!{STRIPE_TOKEN}",
+          LOGGED_IN: !{JSON.stringify(LOGGED_IN)}
+      }
+    if NODE_ENV == "production"
+        script.
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+            ga('create', 'UA-86460215-1', 'auto');
+            ga('send', 'pageview');
+    script(src='/js/index.js')
