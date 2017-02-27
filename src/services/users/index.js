@@ -16,7 +16,16 @@ class Users {
         return user
     }
     async getAll() {
-        return await this.db.findAll()
+        return await this.db.findAll({
+            where: {
+                email: {
+                    $ne: null
+                },
+                stripeChargeId: {
+                    $ne: null
+                }
+            }
+        })
     }
     async getByTwitterUserId(id) {
         const user = await this.db.findOne({

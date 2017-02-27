@@ -31,8 +31,26 @@ class TwitterService {
             })
         })
     }
-    getMentions() {
-
+    getMentions({
+        accessToken,
+        accessTokenSecret
+    }) {
+        return new Promise(async resolve => {
+            this.connection().getTimeline("mentions", {
+                count: 200
+            }, accessToken, accessTokenSecret, (error, data, response) => {
+                resolve(data.map(mention => {
+                    return {
+                        from: {
+                            name: mention.user.screen_name,
+                            avatar: mention.user.profile_image_url
+                        },
+                        text: mention.text,
+                        created_at: mention.created_at
+                    }
+                }))
+            })
+        })
     }
 }
 

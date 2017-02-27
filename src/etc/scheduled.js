@@ -1,6 +1,8 @@
 import moment from 'moment'
 import Services from './../services/'
 const { Twitter, Users } = Services;
+import { logger } from './../etc/logger'
+import mail from './../etc/mail'
 
 const frequencyToDays = frequency => {
     if(frequency == 'day') {
@@ -10,6 +12,11 @@ const frequencyToDays = frequency => {
         return 2
     }
     return 7
+}
+
+const updateLastFetchedFromTwitter = async user => {
+    user.lastFetchedFromTwitter = new Date()
+    return await user.save()
 }
 
 (async () => {
@@ -31,6 +38,24 @@ const frequencyToDays = frequency => {
             const dmAgeInDays = moment().diff(moment(dm.created_at), 'days')
             return dmAgeInDays <= frequencyToDays(user.frequency)
         })
-        console.log(filteredDms)
+        const mentions = await twitter.getMentions({
+            accessToken,
+            accessTokenSecret
+        })
+        const filteredMentions = mentions.filter(mention => {
+            const mentionAgeInDays = moment().diff(moment(mention.created_at), 'days')
+            return mentionAgeInDays <= frequencyToDays(user.frequency)
+        })
+        await updateLastFetchedFromTwitter(user)
+        if(filteredMentions.length || filteredDms.length) {
+            mail.send({
+                to: user.email,
+                data: {
+                    frequency: user.frequency,
+                    dms: filteredDms,
+                    mentions: filteredMentions
+                }
+            })
+        }
     }))
 })()
