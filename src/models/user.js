@@ -1,41 +1,36 @@
 'use strict';
 module.exports = function(sequelize, DataTypes) {
     var User = sequelize.define('User', {
-        firstName: {
-            type: DataTypes.STRING
-        },
-        lastName: {
-            type: DataTypes.STRING
-        },
         email: {
-            type: DataTypes.STRING,
-            unique: true,
-            allowNull: false
-        },
-        password: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            defaultValue: DataTypes.UUIDV1
-        },
-        passwordResetHash: {
-            type: DataTypes.STRING,
-            defaultValue: DataTypes.UUIDV1
-        },
-        full_user: {
-            type: DataTypes.BOOLEAN,
-            defaultValue: false
-        },
-        facebookUserId: {
             type: DataTypes.STRING
         },
-        freeTrialEnd: {
-            type: DataTypes.DATE
+        frequency: {
+            type: DataTypes.STRING
         },
-        domainContactId: {
-            type: DataTypes.INTEGER
+        twitterUsername: {
+            type: DataTypes.STRING,
+            unique: true
         },
-        lastPagesFetchFromFacebook: {
+        twitterUserId: {
+            type: DataTypes.STRING
+        },
+        twitteroAuthToken: {
+            type: DataTypes.STRING
+        },
+        twitteroAuthTokenSecret: {
+            type: DataTypes.STRING
+        },
+        stripeChargeId: {
+            type: DataTypes.STRING
+        },
+        lastFetchedFromTwitter: {
             type: DataTypes.DATE
+        }
+    }, {
+        getterMethods: {
+            isFullUser: function() {
+                return !!(this.getDataValue('stripeChargeId'))
+            }
         }
     });
     return User;

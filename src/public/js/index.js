@@ -6,10 +6,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.loginInit = loginInit;
 exports.loginFailed = loginFailed;
-exports.signUpInit = signUpInit;
-exports.signUpFailed = signUpFailed;
 exports.loggedIn = loggedIn;
-exports.signedUp = signedUp;
 exports.upgradeInit = upgradeInit;
 exports.upgraded = upgraded;
 exports.upgradeErrors = upgradeErrors;
@@ -47,28 +44,9 @@ function loginFailed() {
     };
 }
 
-function signUpInit() {
-    return {
-        type: types.SIGN_UP_INIT
-    };
-}
-
-function signUpFailed() {
-    return {
-        type: types.SIGN_UP_FAILED
-    };
-}
-
 function loggedIn(current_user) {
     return {
         type: types.LOGGED_IN,
-        current_user: current_user
-    };
-}
-
-function signedUp(current_user) {
-    return {
-        type: types.SIGNED_UP,
         current_user: current_user
     };
 }

@@ -20,28 +20,9 @@ export function loginFailed() {
     }
 }
 
-export function signUpInit() {
-    return {
-        type: types.SIGN_UP_INIT
-    }
-}
-
-export function signUpFailed() {
-    return {
-        type: types.SIGN_UP_FAILED
-    }
-}
-
 export function loggedIn(current_user) {
     return {
         type: types.LOGGED_IN,
-        current_user
-    }
-}
-
-export function signedUp(current_user) {
-    return {
-        type: types.SIGNED_UP,
         current_user
     }
 }
