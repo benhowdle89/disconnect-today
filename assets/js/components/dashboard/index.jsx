@@ -16,7 +16,7 @@ class Dashboard extends React.Component {
         super(props)
         this.state = {
             email: this.props.authState.current_user.email,
-            frequency: this.props.authState.current_user.frequency,
+            frequency: this.props.authState.current_user.frequency || 'day',
             saveSettingsErrors: this.props.authState.save_settings_errors,
             upgradeError: this.props.authState.upgrade_error
         }
@@ -92,21 +92,23 @@ class Dashboard extends React.Component {
                     event.preventDefault()
                     fullUser && this.handleSave()
                 }}>
-                    {
-                        !!(saveErrors || upgradeError) && (
-                            <p>{ saveErrors || upgradeError }</p>
-                        )
-                    }
-                    <p>[{ this.getStatus() }] I want to receive emails to <input type="text" placeholder="123@abc.com" value={this.state.email} onChange={event => {
-                        this.handleEmailChange(event.target.value)
-                    }} /> every <select value={ this.state.frequency } onChange={event => {
-                        this.handleFrequencyChange(event.target.value)
-                    }} name="frequency" id="">
+                    <fieldset disabled={!fullUser}>
                         {
-                            ['day', '2_days', 'week'].map(f => <option value={ f }>{ f.replace(/_/, ' ') }</option>)
+                            !!(saveErrors || upgradeError) && (
+                                <p>{ saveErrors || upgradeError }</p>
+                            )
                         }
-                    </select> with a digest of my @mentions and DMs</p>
-                    <input disabled={ isLoading } type="submit" value="Save" />
+                        <p>[{ this.getStatus() }] I want to receive emails to <input type="text" placeholder="123@abc.com" value={this.state.email} onChange={event => {
+                            this.handleEmailChange(event.target.value)
+                        }} /> every <select value={ this.state.frequency } onChange={event => {
+                            this.handleFrequencyChange(event.target.value)
+                        }} name="frequency" id="">
+                            {
+                                ['day', '2_days', 'week'].map(f => <option key={ f } value={ f }>{ f.replace(/_/, ' ') }</option>)
+                            }
+                        </select> with a digest of my @mentions and DMs</p>
+                        <button type="submit" disabled={ isLoading }>Save</button>
+                    </fieldset>
                 </form>
                 {
                     isLoading && (

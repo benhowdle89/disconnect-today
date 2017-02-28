@@ -6,7 +6,7 @@
   ],
   "verbose": true,
   "execMap": {
-    "js": "babel-node src/server.js --harmony_default_parameters"
+    "js": "node dist/server.js --harmony_default_parameters"
   },
   "delay": 1000,
   "ext": "js json"
