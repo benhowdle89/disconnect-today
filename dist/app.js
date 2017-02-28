@@ -72,7 +72,7 @@ app.use(function (req, res, next) {
 var renderIndex = function renderIndex(res, loggedIn) {
     res.render('index', {
         NODE_ENV: process && process.env && process.env.NODE_ENV || 'development',
-        STRIPE_TOKEN: process && process.env && process.env.STRIPE_TOKEN || 'pk_test_WRMMegQqCoCRe6pKB8rL9pLr',
+        STRIPE_TOKEN: process && process.env && process.env.STRIPE_TOKEN || 'pk_test_gemK3upEkZn7FJj6sNcv0ndj',
         LOGGED_IN: loggedIn
     });
 };

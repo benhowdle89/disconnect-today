@@ -36,16 +36,33 @@ var update = function () {
                 switch (_context.prev = _context.next) {
                     case 0:
                         users = new Users();
-                        _context.next = 3;
-                        return users.updateSettings(user.id, email, frequency);
+
+                        if (email) {
+                            _context.next = 3;
+                            break;
+                        }
+
+                        throw new _error2.default(400, 'Please fill in your email address');
 
                     case 3:
+                        if (!(['day', '2_days', 'week'].indexOf(frequency) === -1)) {
+                            _context.next = 5;
+                            break;
+                        }
+
+                        throw new _error2.default(400, 'A valid frequency is required');
+
+                    case 5:
+                        _context.next = 7;
+                        return users.updateSettings(user.id, email, frequency);
+
+                    case 7:
                         updatedUser = _context.sent;
                         return _context.abrupt('return', {
                             user: updatedUser
                         });
 
-                    case 5:
+                    case 9:
                     case 'end':
                         return _context.stop();
                 }

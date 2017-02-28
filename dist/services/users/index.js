@@ -92,7 +92,19 @@ var Users = function () {
                         switch (_context2.prev = _context2.next) {
                             case 0:
                                 _context2.next = 2;
-                                return this.db.find();
+                                return this.db.findAll({
+                                    where: {
+                                        email: {
+                                            $ne: null
+                                        },
+                                        stripeChargeId: {
+                                            $ne: null
+                                        },
+                                        frequency: {
+                                            $in: ['day', '2_days', 'week']
+                                        }
+                                    }
+                                });
 
                             case 2:
                                 return _context2.abrupt('return', _context2.sent);
@@ -187,37 +199,92 @@ var Users = function () {
             return updateSettings;
         }()
     }, {
-        key: 'createUser',
+        key: 'activateAccount',
         value: function () {
-            var _ref5 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee5(_ref6) {
-                var screen_name = _ref6.screen_name,
-                    id_str = _ref6.id_str,
-                    oauthToken = _ref6.oauthToken,
-                    oauthTokenSecret = _ref6.oauthTokenSecret;
-                var user, existing, userObj;
+            var _ref5 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee5(id, chargeId) {
+                var updated;
                 return _regenerator2.default.wrap(function _callee5$(_context5) {
                     while (1) {
                         switch (_context5.prev = _context5.next) {
                             case 0:
+                                _context5.next = 2;
+                                return this.db.update({
+                                    stripeChargeId: chargeId
+                                }, {
+                                    where: {
+                                        id: id
+                                    }
+                                });
+
+                            case 2:
+                                updated = _context5.sent;
+                                _context5.next = 5;
+                                return this.getById(id);
+
+                            case 5:
+                                return _context5.abrupt('return', _context5.sent);
+
+                            case 6:
+                            case 'end':
+                                return _context5.stop();
+                        }
+                    }
+                }, _callee5, this);
+            }));
+
+            function activateAccount(_x6, _x7) {
+                return _ref5.apply(this, arguments);
+            }
+
+            return activateAccount;
+        }()
+    }, {
+        key: 'createUser',
+        value: function () {
+            var _ref6 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee6(_ref7) {
+                var screen_name = _ref7.screen_name,
+                    id_str = _ref7.id_str,
+                    oauthToken = _ref7.oauthToken,
+                    oauthTokenSecret = _ref7.oauthTokenSecret;
+                var user, existing, userObj;
+                return _regenerator2.default.wrap(function _callee6$(_context6) {
+                    while (1) {
+                        switch (_context6.prev = _context6.next) {
+                            case 0:
                                 user = void 0;
-                                _context5.next = 3;
+                                _context6.next = 3;
                                 return this.getByTwitterUserId(id_str);
 
                             case 3:
-                                existing = _context5.sent;
+                                existing = _context6.sent;
 
                                 if (!existing) {
-                                    _context5.next = 8;
+                                    _context6.next = 12;
                                     break;
                                 }
 
-                                user = existing;
-                                _context5.next = 19;
+                                _context6.next = 7;
+                                return this.db.update({
+                                    twitteroAuthToken: oauthToken,
+                                    twitteroAuthTokenSecret: oauthTokenSecret
+                                }, {
+                                    where: {
+                                        twitterUserId: id_str
+                                    }
+                                });
+
+                            case 7:
+                                _context6.next = 9;
+                                return this.getByTwitterUserId(id_str);
+
+                            case 9:
+                                user = _context6.sent;
+                                _context6.next = 23;
                                 break;
 
-                            case 8:
-                                _context5.prev = 8;
-                                _context5.next = 11;
+                            case 12:
+                                _context6.prev = 12;
+                                _context6.next = 15;
                                 return this.db.create({
                                     twitterUsername: screen_name,
                                     twitterUserId: id_str,
@@ -225,48 +292,48 @@ var Users = function () {
                                     twitteroAuthTokenSecret: oauthTokenSecret
                                 });
 
-                            case 11:
-                                user = _context5.sent;
-                                _context5.next = 18;
+                            case 15:
+                                user = _context6.sent;
+                                _context6.next = 22;
                                 break;
 
-                            case 14:
-                                _context5.prev = 14;
-                                _context5.t0 = _context5['catch'](8);
+                            case 18:
+                                _context6.prev = 18;
+                                _context6.t0 = _context6['catch'](12);
 
-                                _logger.logger.error('Error creating user', _context5.t0);
-                                return _context5.abrupt('return', {
-                                    error: _context5.t0
+                                _logger.logger.error('Error creating user', _context6.t0);
+                                return _context6.abrupt('return', {
+                                    error: _context6.t0
                                 });
 
-                            case 18:
+                            case 22:
                                 _logger.logger.info('Creating user', screen_name);
 
-                            case 19:
+                            case 23:
                                 userObj = user.get({
                                     plain: true
                                 });
-                                _context5.next = 22;
+                                _context6.next = 26;
                                 return _auth2.default.create({
                                     id: userObj.id
                                 });
 
-                            case 22:
-                                userObj.token = _context5.sent;
-                                return _context5.abrupt('return', {
+                            case 26:
+                                userObj.token = _context6.sent;
+                                return _context6.abrupt('return', {
                                     user: userObj
                                 });
 
-                            case 24:
+                            case 28:
                             case 'end':
-                                return _context5.stop();
+                                return _context6.stop();
                         }
                     }
-                }, _callee5, this, [[8, 14]]);
+                }, _callee6, this, [[12, 18]]);
             }));
 
-            function createUser(_x6) {
-                return _ref5.apply(this, arguments);
+            function createUser(_x8) {
+                return _ref6.apply(this, arguments);
             }
 
             return createUser;
