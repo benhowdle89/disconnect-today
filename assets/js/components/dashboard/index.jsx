@@ -102,14 +102,16 @@ class Dashboard extends React.Component {
                             lineHeight: '2rem'
                         }}>{ this.getStatus() } I want to receive emails to <input type="email" placeholder="123@abc.com" value={this.state.email} onChange={event => {
                             this.handleEmailChange(event.target.value)
-                        }} /> every <select value={ this.state.frequency } onChange={event => {
+                        }} /> <select value={ this.state.frequency } onChange={event => {
                             this.handleFrequencyChange(event.target.value)
                         }} name="frequency" id="">
                             {
-                                ['day', '2_days', 'week'].map(f => <option key={ f } value={ f }>{ f.replace(/_/, ' ') }</option>)
+                                ['day', '2_days', 'week'].map(f => <option key={ f } value={ f }>every { f.replace(/_/, ' ') }</option>)
                             }
                         </select> with a digest of my @mentions and DMs.</p>
-                        <button className="button right" type="submit" disabled={ isLoading }>Save</button>
+                        <div className="flex justify-center">
+                            <button className="button" type="submit" disabled={ isLoading }>Save</button>
+                        </div>
                     </fieldset>
                 </form>
                 {
