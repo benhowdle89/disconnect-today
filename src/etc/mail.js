@@ -21,7 +21,7 @@ let send = ({
         frequency: data.frequency
     })
     logger.info('Sending email', to)
-    const sendEmail = () => {
+    const sendEmail = resolve => {
         const params = {
             Destination: {
                 ToAddresses: [to]
@@ -43,12 +43,14 @@ let send = ({
         ses.sendEmail(params, (err, data) => {
             if(err) {
                 logger.error(err)
-                return
+                return resolve()
             }
-            return logger.info('Email sent', to)
+            logger.info('Email sent', to)
+            return resolve()
         })
     }
-    return process.env.NODE_ENV == 'production' || sendEmail()
+    return new Promise(resolve => sendEmail(resolve))
+    // return process.env.NODE_ENV == 'production' || sendEmail()
 }
 
 module.exports = {

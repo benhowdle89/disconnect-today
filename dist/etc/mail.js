@@ -1,5 +1,9 @@
 'use strict';
 
+var _promise = require('babel-runtime/core-js/promise');
+
+var _promise2 = _interopRequireDefault(_promise);
+
 var _awsSdk = require('aws-sdk');
 
 var _awsSdk2 = _interopRequireDefault(_awsSdk);
@@ -32,7 +36,7 @@ var send = function send(_ref) {
         frequency: data.frequency
     });
     _logger.logger.info('Sending email', to);
-    var sendEmail = function sendEmail() {
+    var sendEmail = function sendEmail(resolve) {
         var params = {
             Destination: {
                 ToAddresses: [to]
@@ -54,12 +58,16 @@ var send = function send(_ref) {
         ses.sendEmail(params, function (err, data) {
             if (err) {
                 _logger.logger.error(err);
-                return;
+                return resolve();
             }
-            return _logger.logger.info('Email sent', to);
+            _logger.logger.info('Email sent', to);
+            return resolve();
         });
     };
-    return (process && process.env && process.env.NODE_ENV || 'development') == 'production' || sendEmail();
+    return new _promise2.default(function (resolve) {
+        return sendEmail(resolve);
+    });
+    // return process.env.NODE_ENV == 'production' || sendEmail()
 };
 
 module.exports = {
