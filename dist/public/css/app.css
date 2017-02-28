@@ -396,7 +396,10 @@ input {
 select {
   font-size: inherit;
   background: transparent;
-  padding: 12px 6px; }
+  padding: 4px 6px;
+  border-bottom: 3px solid #222;
+  -webkit-appearance: none;
+  border-radius: 0; }
   select:focus {
     outline: none; }
 
