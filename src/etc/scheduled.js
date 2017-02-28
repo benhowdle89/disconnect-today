@@ -8,7 +8,7 @@ const frequencyToDays = frequency => {
     if(frequency == 'day') {
         return 1
     }
-    if(frequency == '2 days') {
+    if(frequency == '2_days') {
         return 2
     }
     return 7

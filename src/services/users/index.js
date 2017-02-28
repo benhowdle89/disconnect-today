@@ -23,6 +23,9 @@ class Users {
                 },
                 stripeChargeId: {
                     $ne: null
+                },
+                frequency: {
+                    $in: ['day', '2_days', 'week']
                 }
             }
         })

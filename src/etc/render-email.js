@@ -37,6 +37,7 @@ const css = `
     a { font-family: sans-serif; color: #DA4177; font-weight: bold; }
     hr { background-color: #FFE952; height: 3px; border: none; margin: 40px 0; }
     span { line-height: 1.65 !important; }
+    table { float: none !important; }
 `.trim()
 
 const emailHTML = ({ mentions, dms, frequency }) => {
@@ -140,6 +141,15 @@ const emailHTML = ({ mentions, dms, frequency }) => {
                                     </Span>
                                 )
                             }
+                        </Item>
+                    </Box>
+                    <Box style={{
+                        marginTop: '60px',
+                        paddingTop: '20px',
+                        borderTop: '1px solid rgba(0,0,0,0.1)'
+                    }}>
+                        <Item>
+                            <Span>Have a lovely day ✌️</Span>
                         </Item>
                     </Box>
             </Item>

@@ -17,10 +17,10 @@ const initialState = {
     logged_in: !!(config.LOGGED_IN),
     logging_in: false,
     current_user: config.LOGGED_IN || null,
-    upgrade_error: {},
+    upgrade_error: null,
     upgrading: false,
     saving_settings: false,
-    save_settings_errors: {}
+    save_settings_errors: null
 }
 
 export default function authState(state = initialState, action) {

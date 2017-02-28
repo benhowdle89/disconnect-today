@@ -8,25 +8,6 @@ import { toastr } from 'react-redux-toastr'
 
 import * as types from '../constants/action-types'
 
-export function loginInit() {
-    return {
-        type: types.LOGIN_INIT
-    }
-}
-
-export function loginFailed() {
-    return {
-        type: types.LOGIN_FAILED
-    }
-}
-
-export function loggedIn(current_user) {
-    return {
-        type: types.LOGGED_IN,
-        current_user
-    }
-}
-
 export function saveSettingsInit() {
     return {
         type: types.SAVING_SETTINGS
@@ -100,8 +81,7 @@ export function upgrade(stripeToken) {
 
         return fetch('users/upgrade', {
                 body: {
-                    stripe_token_id: stripeToken,
-                    plan_id: planId
+                    stripe_token_id: stripeToken
                 }
             })
             .then(json => {
@@ -110,7 +90,7 @@ export function upgrade(stripeToken) {
                 }
                 if(json.user){
                     dispatch(upgraded(json.user))
-                    toastr.success('Congratulations', 'You\'re now a fully paid Ekko user. Let\'s get a domain name connected to your website.')
+                    toastr.success('Thanks', 'Your account has been activated. Enjoy your digest emails!')
                 }
             })
     }
@@ -121,56 +101,5 @@ export function logout() {
     intercom.logout()
     return {
         type: types.LOGOUT
-    }
-}
-
-export function login({
-    email,
-    password
-}) {
-    return dispatch => {
-        dispatch(loginInit())
-        if (!email) {
-            dispatch(formActions.batch('login', [
-                formActions.setSubmitFailed('login'),
-                setFieldsErrors('login', {
-                    email: messages.FORM_EMAIL_NULL
-                })
-            ]))
-        } else if (!password) {
-            dispatch(formActions.batch('login', [
-                formActions.setSubmitFailed('login'),
-                setFieldsErrors('login', {
-                    password: messages.FORM_PASSWORD_NULL
-                })
-            ]))
-        }
-        return fetch('api/users/login', {
-                body: {
-                    email,
-                    password
-                }
-            })
-            .then((json = {}) => {
-                if (json.error) {
-                    dispatch(formActions.batch('login', [
-                        formActions.setSubmitFailed('login'),
-                        formActions.setErrors('login', json.error)
-                    ]))
-                    dispatch(loginFailed())
-                    return setTimeout(() => dispatch(formActions.setErrors('login', false)), 3000)
-                }
-                if(json.user){
-                    dispatch(formActions.batch('login', [
-                        formActions.setSubmitted('login'),
-                        formActions.reset('login')
-                    ]))
-                    dispatch(loggedIn(json.user))
-                    dispatch(push('/dashboard'))
-                    intercom.update(json.user)
-                }
-            }).catch(() => {
-                dispatch(loginFailed())
-            })
     }
 }
