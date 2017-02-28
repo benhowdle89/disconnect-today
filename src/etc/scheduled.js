@@ -23,7 +23,7 @@ const updateLastFetchedFromTwitter = async user => {
     const users = new Users()
     const twitter = new Twitter()
     const allUsers = await users.getAll()
-    return Promise.all(allUsers.map(async (user) => {
+    const actions = Promise.all(allUsers.map(async (user) => {
         const lastFetchedFromTwitterInDays = user.lastFetchedFromTwitter ? moment().diff(moment(user.lastFetchedFromTwitter), 'days') : 0
         if(lastFetchedFromTwitterInDays !== 0 && lastFetchedFromTwitterInDays <= frequencyToDays(user.frequency)) {
             return
@@ -48,7 +48,7 @@ const updateLastFetchedFromTwitter = async user => {
         })
         await updateLastFetchedFromTwitter(user)
         if(filteredMentions.length || filteredDms.length) {
-            mail.send({
+            return mail.send({
                 to: user.email,
                 data: {
                     frequency: user.frequency,
@@ -57,5 +57,8 @@ const updateLastFetchedFromTwitter = async user => {
                 }
             })
         }
+        return {}
     }))
+    await actions
+    process.exit()
 })()

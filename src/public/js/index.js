@@ -1,35 +1,917 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-"use strict";function _interopRequireWildcard(e){if(e&&e.__esModule)return e;var r={};if(null!=e)for(var t in e)Object.prototype.hasOwnProperty.call(e,t)&&(r[t]=e[t]);return r.default=e,r}function _interopRequireDefault(e){return e&&e.__esModule?e:{default:e}}function loginInit(){return{type:types.LOGIN_INIT}}function loginFailed(){return{type:types.LOGIN_FAILED}}function loggedIn(e){return{type:types.LOGGED_IN,current_user:e}}function saveSettingsInit(){return{type:types.SAVING_SETTINGS}}function savedSettings(e){return{type:types.SAVED_SETTINGS,current_user:e}}function saveSettingsErrors(e){return{type:types.SAVE_SETTINGS_ERRORS,errors:e}}function upgradeInit(){return{type:types.UPGRADING}}function upgraded(e){return{type:types.UPGRADED,current_user:e}}function upgradeErrors(e){return{type:types.UPGRADE_ERROR,error:e}}function saveSettings(e){var r=e.email,t=e.frequency;return function(e,n){return e(saveSettingsInit()),(0,_fetch.fetch)("users/update",{body:{email:r,frequency:t}}).then(function(r){return r.error?e(saveSettingsErrors(r.error)):void(r.user&&(e(savedSettings(r.user)),_reactReduxToastr.toastr.success("All done","Your settings have been saved.")))})}}function upgrade(e){return function(r,t){return r(upgradeInit()),(0,_fetch.fetch)("users/upgrade",{body:{stripe_token_id:e,plan_id:planId}}).then(function(e){return e.error?r(upgradeErrors(e.error)):void(e.user&&(r(upgraded(e.user)),_reactReduxToastr.toastr.success("Congratulations","You're now a fully paid Ekko user. Let's get a domain name connected to your website.")))})}}function logout(){return _store2.default.clear(),intercom.logout(),{type:types.LOGOUT}}function login(e){var r=e.email,t=e.password;return function(e){return e(loginInit()),r?t||e(formActions.batch("login",[formActions.setSubmitFailed("login"),setFieldsErrors("login",{password:messages.FORM_PASSWORD_NULL})])):e(formActions.batch("login",[formActions.setSubmitFailed("login"),setFieldsErrors("login",{email:messages.FORM_EMAIL_NULL})])),(0,_fetch.fetch)("api/users/login",{body:{email:r,password:t}}).then(function(){var r=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{};return r.error?(e(formActions.batch("login",[formActions.setSubmitFailed("login"),formActions.setErrors("login",r.error)])),e(loginFailed()),setTimeout(function(){return e(formActions.setErrors("login",!1))},3e3)):void(r.user&&(e(formActions.batch("login",[formActions.setSubmitted("login"),formActions.reset("login")])),e(loggedIn(r.user)),e((0,_reactRouterRedux.push)("/dashboard")),intercom.update(r.user)))}).catch(function(){e(loginFailed())})}}Object.defineProperty(exports,"__esModule",{value:!0}),exports.loginInit=loginInit,exports.loginFailed=loginFailed,exports.loggedIn=loggedIn,exports.saveSettingsInit=saveSettingsInit,exports.savedSettings=savedSettings,exports.saveSettingsErrors=saveSettingsErrors,exports.upgradeInit=upgradeInit,exports.upgraded=upgraded,exports.upgradeErrors=upgradeErrors,exports.saveSettings=saveSettings,exports.upgrade=upgrade,exports.logout=logout,exports.login=login;var _fetch=require("./../etc/fetch"),_store=require("./../etc/store"),_store2=_interopRequireDefault(_store),_reactRouterRedux=require("react-router-redux"),_reactReduxToastr=require("react-redux-toastr"),_actionTypes=require("../constants/action-types"),types=_interopRequireWildcard(_actionTypes);
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.loginInit = loginInit;
+exports.loginFailed = loginFailed;
+exports.loggedIn = loggedIn;
+exports.saveSettingsInit = saveSettingsInit;
+exports.savedSettings = savedSettings;
+exports.saveSettingsErrors = saveSettingsErrors;
+exports.upgradeInit = upgradeInit;
+exports.upgraded = upgraded;
+exports.upgradeErrors = upgradeErrors;
+exports.saveSettings = saveSettings;
+exports.upgrade = upgrade;
+exports.logout = logout;
+exports.login = login;
+
+var _fetch = require('./../etc/fetch');
+
+var _store = require('./../etc/store');
+
+var _store2 = _interopRequireDefault(_store);
+
+var _reactRouterRedux = require('react-router-redux');
+
+var _reactReduxToastr = require('react-redux-toastr');
+
+var _actionTypes = require('../constants/action-types');
+
+var types = _interopRequireWildcard(_actionTypes);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function loginInit() {
+    return {
+        type: types.LOGIN_INIT
+    };
+}
+
+function loginFailed() {
+    return {
+        type: types.LOGIN_FAILED
+    };
+}
+
+function loggedIn(current_user) {
+    return {
+        type: types.LOGGED_IN,
+        current_user: current_user
+    };
+}
+
+function saveSettingsInit() {
+    return {
+        type: types.SAVING_SETTINGS
+    };
+}
+
+function savedSettings(current_user) {
+    return {
+        type: types.SAVED_SETTINGS,
+        current_user: current_user
+    };
+}
+
+function saveSettingsErrors(errors) {
+    return {
+        type: types.SAVE_SETTINGS_ERRORS,
+        errors: errors
+    };
+}
+
+function upgradeInit() {
+    return {
+        type: types.UPGRADING
+    };
+}
+
+function upgraded(current_user) {
+    return {
+        type: types.UPGRADED,
+        current_user: current_user
+    };
+}
+
+function upgradeErrors(error) {
+    return {
+        type: types.UPGRADE_ERROR,
+        error: error
+    };
+}
+
+function saveSettings(_ref) {
+    var email = _ref.email,
+        frequency = _ref.frequency;
+
+    return function (dispatch, getState) {
+
+        dispatch(saveSettingsInit());
+
+        return (0, _fetch.fetch)('users/update', {
+            body: {
+                email: email,
+                frequency: frequency
+            }
+        }).then(function (json) {
+            if (json.error) {
+                return dispatch(saveSettingsErrors(json.error));
+            }
+            if (json.user) {
+                dispatch(savedSettings(json.user));
+                _reactReduxToastr.toastr.success('All done', 'Your settings have been saved.');
+            }
+        });
+    };
+}
+
+function upgrade(stripeToken) {
+    return function (dispatch, getState) {
+
+        dispatch(upgradeInit());
+
+        return (0, _fetch.fetch)('users/upgrade', {
+            body: {
+                stripe_token_id: stripeToken,
+                plan_id: planId
+            }
+        }).then(function (json) {
+            if (json.error) {
+                return dispatch(upgradeErrors(json.error));
+            }
+            if (json.user) {
+                dispatch(upgraded(json.user));
+                _reactReduxToastr.toastr.success('Congratulations', 'You\'re now a fully paid Ekko user. Let\'s get a domain name connected to your website.');
+            }
+        });
+    };
+}
+
+function logout() {
+    _store2.default.clear();
+    intercom.logout();
+    return {
+        type: types.LOGOUT
+    };
+}
+
+function login(_ref2) {
+    var email = _ref2.email,
+        password = _ref2.password;
+
+    return function (dispatch) {
+        dispatch(loginInit());
+        if (!email) {
+            dispatch(formActions.batch('login', [formActions.setSubmitFailed('login'), setFieldsErrors('login', {
+                email: messages.FORM_EMAIL_NULL
+            })]));
+        } else if (!password) {
+            dispatch(formActions.batch('login', [formActions.setSubmitFailed('login'), setFieldsErrors('login', {
+                password: messages.FORM_PASSWORD_NULL
+            })]));
+        }
+        return (0, _fetch.fetch)('api/users/login', {
+            body: {
+                email: email,
+                password: password
+            }
+        }).then(function () {
+            var json = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+            if (json.error) {
+                dispatch(formActions.batch('login', [formActions.setSubmitFailed('login'), formActions.setErrors('login', json.error)]));
+                dispatch(loginFailed());
+                return setTimeout(function () {
+                    return dispatch(formActions.setErrors('login', false));
+                }, 3000);
+            }
+            if (json.user) {
+                dispatch(formActions.batch('login', [formActions.setSubmitted('login'), formActions.reset('login')]));
+                dispatch(loggedIn(json.user));
+                dispatch((0, _reactRouterRedux.push)('/dashboard'));
+                intercom.update(json.user);
+            }
+        }).catch(function () {
+            dispatch(loginFailed());
+        });
+    };
+}
 
 },{"../constants/action-types":5,"./../etc/fetch":7,"./../etc/store":8,"react-redux-toastr":278,"react-router-redux":300}],2:[function(require,module,exports){
 "use strict";
 
 },{}],3:[function(require,module,exports){
-"use strict";function _interopRequireWildcard(e){if(e&&e.__esModule)return e;var t={};if(null!=e)for(var r in e)Object.prototype.hasOwnProperty.call(e,r)&&(t[r]=e[r]);return t.default=e,t}function _interopRequireDefault(e){return e&&e.__esModule?e:{default:e}}function mapStateToProps(e){return{authState:e.authState}}function mapDispatchToProps(e){return{authActions:(0,_redux.bindActionCreators)(authActions,e)}}Object.defineProperty(exports,"__esModule",{value:!0});var _getPrototypeOf=require("babel-runtime/core-js/object/get-prototype-of"),_getPrototypeOf2=_interopRequireDefault(_getPrototypeOf),_classCallCheck2=require("babel-runtime/helpers/classCallCheck"),_classCallCheck3=_interopRequireDefault(_classCallCheck2),_createClass2=require("babel-runtime/helpers/createClass"),_createClass3=_interopRequireDefault(_createClass2),_possibleConstructorReturn2=require("babel-runtime/helpers/possibleConstructorReturn"),_possibleConstructorReturn3=_interopRequireDefault(_possibleConstructorReturn2),_inherits2=require("babel-runtime/helpers/inherits"),_inherits3=_interopRequireDefault(_inherits2),_react=require("react"),_react2=_interopRequireDefault(_react),_reactRouter=require("react-router"),_redux=require("redux"),_reactRedux=require("react-redux"),_moment=require("moment"),_moment2=_interopRequireDefault(_moment),_auth=require("./../../actions/auth"),authActions=_interopRequireWildcard(_auth),Dashboard=function(e){function t(e){(0,_classCallCheck3.default)(this,t);var r=(0,_possibleConstructorReturn3.default)(this,(t.__proto__||(0,_getPrototypeOf2.default)(t)).call(this,e));return r.handleEmailChange=function(e){r.setState({email:e})},r.handleFrequencyChange=function(e){r.setState({frequency:e})},r.handleSave=function(){r.props.authActions.saveSettings({email:r.state.email,frequency:r.state.frequency})},r.state={email:r.props.authState.current_user.email,frequency:r.props.authState.current_user.frequency},r}return(0,_inherits3.default)(t,e),(0,_createClass3.default)(t,[{key:"render",value:function(){var e=this,t=this.props.authState.current_user;return _react2.default.createElement("div",null,_react2.default.createElement("h1",null,"Disconnect Today"),_react2.default.createElement("form",{action:"",onSubmit:function(t){t.preventDefault(),e.handleSave()}},_react2.default.createElement("p",null,"I want to receive emails to ",_react2.default.createElement("input",{type:"text",placeholder:"123@abc.com",value:this.state.email,onChange:function(t){e.handleEmailChange(t.target.value)}})," every ",_react2.default.createElement("input",{type:"text",placeholder:"day",value:this.state.frequency,onChange:function(t){e.handleFrequencyChange(t.target.value)}})," with a digest of my @mentions and DMs"),_react2.default.createElement("input",{type:"submit",value:"Save"})),!!t.lastFetchedFromTwitter&&_react2.default.createElement("p",null,"Last ran ",(0,_moment2.default)(t.lastFetchedFromTwitter).fromNow()))}}]),t}(_react2.default.Component);exports.default=(0,_reactRedux.connect)(mapStateToProps,mapDispatchToProps)(Dashboard),module.exports=exports.default;
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _getPrototypeOf = require('babel-runtime/core-js/object/get-prototype-of');
+
+var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
+var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = require('babel-runtime/helpers/createClass');
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _possibleConstructorReturn2 = require('babel-runtime/helpers/possibleConstructorReturn');
+
+var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+var _inherits2 = require('babel-runtime/helpers/inherits');
+
+var _inherits3 = _interopRequireDefault(_inherits2);
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactRouter = require('react-router');
+
+var _redux = require('redux');
+
+var _reactRedux = require('react-redux');
+
+var _moment = require('moment');
+
+var _moment2 = _interopRequireDefault(_moment);
+
+var _auth = require('./../../actions/auth');
+
+var authActions = _interopRequireWildcard(_auth);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Dashboard = function (_React$Component) {
+    (0, _inherits3.default)(Dashboard, _React$Component);
+
+    function Dashboard(props) {
+        (0, _classCallCheck3.default)(this, Dashboard);
+
+        var _this = (0, _possibleConstructorReturn3.default)(this, (Dashboard.__proto__ || (0, _getPrototypeOf2.default)(Dashboard)).call(this, props));
+
+        _this.handleEmailChange = function (email) {
+            _this.setState({
+                email: email
+            });
+        };
+
+        _this.handleFrequencyChange = function (frequency) {
+            _this.setState({
+                frequency: frequency
+            });
+        };
+
+        _this.handleSave = function () {
+            _this.props.authActions.saveSettings({
+                email: _this.state.email,
+                frequency: _this.state.frequency
+            });
+        };
+
+        _this.state = {
+            email: _this.props.authState.current_user.email,
+            frequency: _this.props.authState.current_user.frequency
+        };
+        return _this;
+    }
+
+    (0, _createClass3.default)(Dashboard, [{
+        key: 'render',
+        value: function render() {
+            var _this2 = this;
+
+            var user = this.props.authState.current_user;
+            return _react2.default.createElement(
+                'div',
+                null,
+                _react2.default.createElement(
+                    'h1',
+                    null,
+                    'Disconnect Today'
+                ),
+                _react2.default.createElement(
+                    'form',
+                    { action: '', onSubmit: function onSubmit(event) {
+                            event.preventDefault();
+                            _this2.handleSave();
+                        } },
+                    _react2.default.createElement(
+                        'p',
+                        null,
+                        'I want to receive emails to ',
+                        _react2.default.createElement('input', { type: 'text', placeholder: '123@abc.com', value: this.state.email, onChange: function onChange(event) {
+                                _this2.handleEmailChange(event.target.value);
+                            } }),
+                        ' every ',
+                        _react2.default.createElement('input', { type: 'text', placeholder: 'day', value: this.state.frequency, onChange: function onChange(event) {
+                                _this2.handleFrequencyChange(event.target.value);
+                            } }),
+                        ' with a digest of my @mentions and DMs'
+                    ),
+                    _react2.default.createElement('input', { type: 'submit', value: 'Save' })
+                ),
+                !!user.lastFetchedFromTwitter && _react2.default.createElement(
+                    'p',
+                    null,
+                    'Last ran ',
+                    (0, _moment2.default)(user.lastFetchedFromTwitter).fromNow()
+                )
+            );
+        }
+    }]);
+    return Dashboard;
+}(_react2.default.Component);
+
+function mapStateToProps(state) {
+    return {
+        authState: state.authState
+    };
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+        authActions: (0, _redux.bindActionCreators)(authActions, dispatch)
+    };
+}
+
+exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Dashboard);
+module.exports = exports['default'];
 
 },{"./../../actions/auth":1,"babel-runtime/core-js/object/get-prototype-of":16,"babel-runtime/helpers/classCallCheck":20,"babel-runtime/helpers/createClass":21,"babel-runtime/helpers/inherits":23,"babel-runtime/helpers/possibleConstructorReturn":24,"moment":139,"react":385,"react-redux":284,"react-router":333,"redux":397}],4:[function(require,module,exports){
-"use strict";function _interopRequireWildcard(e){if(e&&e.__esModule)return e;var t={};if(null!=e)for(var r in e)Object.prototype.hasOwnProperty.call(e,r)&&(t[r]=e[r]);return t.default=e,t}function _interopRequireDefault(e){return e&&e.__esModule?e:{default:e}}function mapStateToProps(e){return{authState:e.authState}}function mapDispatchToProps(e){return{authActions:(0,_redux.bindActionCreators)(authActions,e)}}Object.defineProperty(exports,"__esModule",{value:!0});var _getPrototypeOf=require("babel-runtime/core-js/object/get-prototype-of"),_getPrototypeOf2=_interopRequireDefault(_getPrototypeOf),_classCallCheck2=require("babel-runtime/helpers/classCallCheck"),_classCallCheck3=_interopRequireDefault(_classCallCheck2),_createClass2=require("babel-runtime/helpers/createClass"),_createClass3=_interopRequireDefault(_createClass2),_possibleConstructorReturn2=require("babel-runtime/helpers/possibleConstructorReturn"),_possibleConstructorReturn3=_interopRequireDefault(_possibleConstructorReturn2),_inherits2=require("babel-runtime/helpers/inherits"),_inherits3=_interopRequireDefault(_inherits2),_react=require("react"),_react2=_interopRequireDefault(_react),_reactRouter=require("react-router"),_redux=require("redux"),_reactRedux=require("react-redux"),_auth=require("./../../actions/auth"),authActions=_interopRequireWildcard(_auth),Home=function(e){function t(){return(0,_classCallCheck3.default)(this,t),(0,_possibleConstructorReturn3.default)(this,(t.__proto__||(0,_getPrototypeOf2.default)(t)).apply(this,arguments))}return(0,_inherits3.default)(t,e),(0,_createClass3.default)(t,[{key:"render",value:function(){return _react2.default.createElement("div",null,_react2.default.createElement("h1",null,"Disconnect Today"),_react2.default.createElement("a",{href:"/api/twitter-connect"},"Sign in with Twitter"))}}]),t}(_react2.default.Component);exports.default=(0,_reactRedux.connect)(mapStateToProps,mapDispatchToProps)(Home),module.exports=exports.default;
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _getPrototypeOf = require('babel-runtime/core-js/object/get-prototype-of');
+
+var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
+var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = require('babel-runtime/helpers/createClass');
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _possibleConstructorReturn2 = require('babel-runtime/helpers/possibleConstructorReturn');
+
+var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+var _inherits2 = require('babel-runtime/helpers/inherits');
+
+var _inherits3 = _interopRequireDefault(_inherits2);
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactRouter = require('react-router');
+
+var _redux = require('redux');
+
+var _reactRedux = require('react-redux');
+
+var _auth = require('./../../actions/auth');
+
+var authActions = _interopRequireWildcard(_auth);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Home = function (_React$Component) {
+    (0, _inherits3.default)(Home, _React$Component);
+
+    function Home() {
+        (0, _classCallCheck3.default)(this, Home);
+        return (0, _possibleConstructorReturn3.default)(this, (Home.__proto__ || (0, _getPrototypeOf2.default)(Home)).apply(this, arguments));
+    }
+
+    (0, _createClass3.default)(Home, [{
+        key: 'render',
+        value: function render() {
+            return _react2.default.createElement(
+                'div',
+                null,
+                _react2.default.createElement(
+                    'h1',
+                    null,
+                    'Disconnect Today'
+                ),
+                _react2.default.createElement(
+                    'a',
+                    { href: '/api/twitter-connect' },
+                    'Sign in with Twitter'
+                )
+            );
+        }
+    }]);
+    return Home;
+}(_react2.default.Component);
+
+function mapStateToProps(state) {
+    return {
+        authState: state.authState
+    };
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+        authActions: (0, _redux.bindActionCreators)(authActions, dispatch)
+    };
+}
+
+exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Home);
+module.exports = exports['default'];
 
 },{"./../../actions/auth":1,"babel-runtime/core-js/object/get-prototype-of":16,"babel-runtime/helpers/classCallCheck":20,"babel-runtime/helpers/createClass":21,"babel-runtime/helpers/inherits":23,"babel-runtime/helpers/possibleConstructorReturn":24,"react":385,"react-redux":284,"react-router":333,"redux":397}],5:[function(require,module,exports){
-"use strict";Object.defineProperty(exports,"__esModule",{value:!0});var LOGIN_INIT=exports.LOGIN_INIT="LOGIN_INIT",LOGIN_FAILED=exports.LOGIN_FAILED="LOGIN_FAILED",LOGGED_IN=exports.LOGGED_IN="LOGGED_IN",LOGOUT=exports.LOGOUT="LOGOUT",SAVE_SETTINGS=exports.SAVE_SETTINGS="SAVE_SETTINGS",SAVE_SETTINGS_ERRORS=exports.SAVE_SETTINGS_ERRORS="SAVE_SETTINGS_ERRORS",SAVING_SETTINGS=exports.SAVING_SETTINGS="SAVING_SETTINGS",SAVED_SETTINGS=exports.SAVED_SETTINGS="SAVED_SETTINGS";
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var LOGIN_INIT = exports.LOGIN_INIT = 'LOGIN_INIT';
+var LOGIN_FAILED = exports.LOGIN_FAILED = 'LOGIN_FAILED';
+var LOGGED_IN = exports.LOGGED_IN = 'LOGGED_IN';
+var LOGOUT = exports.LOGOUT = 'LOGOUT';
+
+var SAVE_SETTINGS = exports.SAVE_SETTINGS = 'SAVE_SETTINGS';
+var SAVE_SETTINGS_ERRORS = exports.SAVE_SETTINGS_ERRORS = 'SAVE_SETTINGS_ERRORS';
+var SAVING_SETTINGS = exports.SAVING_SETTINGS = 'SAVING_SETTINGS';
+var SAVED_SETTINGS = exports.SAVED_SETTINGS = 'SAVED_SETTINGS';
 
 },{}],6:[function(require,module,exports){
-"use strict";function _interopRequireWildcard(e){if(e&&e.__esModule)return e;var t={};if(null!=e)for(var r in e)Object.prototype.hasOwnProperty.call(e,r)&&(t[r]=e[r]);return t.default=e,t}function _interopRequireDefault(e){return e&&e.__esModule?e:{default:e}}function mapStateToProps(e){return{authState:e.authState}}function mapDispatchToProps(e){return{authActions:(0,_redux.bindActionCreators)(authActions,e)}}Object.defineProperty(exports,"__esModule",{value:!0});var _getPrototypeOf=require("babel-runtime/core-js/object/get-prototype-of"),_getPrototypeOf2=_interopRequireDefault(_getPrototypeOf),_classCallCheck2=require("babel-runtime/helpers/classCallCheck"),_classCallCheck3=_interopRequireDefault(_classCallCheck2),_createClass2=require("babel-runtime/helpers/createClass"),_createClass3=_interopRequireDefault(_createClass2),_possibleConstructorReturn2=require("babel-runtime/helpers/possibleConstructorReturn"),_possibleConstructorReturn3=_interopRequireDefault(_possibleConstructorReturn2),_inherits2=require("babel-runtime/helpers/inherits"),_inherits3=_interopRequireDefault(_inherits2),_react=require("react"),_react2=_interopRequireDefault(_react),_redux=require("redux"),_reactRedux=require("react-redux"),_reactRouter=require("react-router"),_auth=require("./../actions/auth"),authActions=_interopRequireWildcard(_auth),_store=require("./../etc/store"),_store2=_interopRequireDefault(_store),inApp=function(e){return["dashboard"].some(function(t){return e.match(new RegExp(t))})},onHomepage=function(e){return"/"==e},App=function(e){function t(){return(0,_classCallCheck3.default)(this,t),(0,_possibleConstructorReturn3.default)(this,(t.__proto__||(0,_getPrototypeOf2.default)(t)).apply(this,arguments))}return(0,_inherits3.default)(t,e),(0,_createClass3.default)(t,[{key:"render",value:function(){return _react2.default.createElement("div",null,this.props.children)}}]),t}(_react2.default.Component);App.propTypes={authActions:_react.PropTypes.object.isRequired,authState:_react.PropTypes.object.isRequired},exports.default=(0,_reactRedux.connect)(mapStateToProps,mapDispatchToProps)(App),module.exports=exports.default;
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _getPrototypeOf = require('babel-runtime/core-js/object/get-prototype-of');
+
+var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
+var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = require('babel-runtime/helpers/createClass');
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _possibleConstructorReturn2 = require('babel-runtime/helpers/possibleConstructorReturn');
+
+var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+var _inherits2 = require('babel-runtime/helpers/inherits');
+
+var _inherits3 = _interopRequireDefault(_inherits2);
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _redux = require('redux');
+
+var _reactRedux = require('react-redux');
+
+var _reactRouter = require('react-router');
+
+var _auth = require('./../actions/auth');
+
+var authActions = _interopRequireWildcard(_auth);
+
+var _store = require('./../etc/store');
+
+var _store2 = _interopRequireDefault(_store);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var inApp = function inApp(pathname) {
+    return ['dashboard'].some(function (r) {
+        return pathname.match(new RegExp(r));
+    });
+};
+
+var onHomepage = function onHomepage(pathname) {
+    return pathname == '/';
+};
+
+var App = function (_React$Component) {
+    (0, _inherits3.default)(App, _React$Component);
+
+    function App() {
+        (0, _classCallCheck3.default)(this, App);
+        return (0, _possibleConstructorReturn3.default)(this, (App.__proto__ || (0, _getPrototypeOf2.default)(App)).apply(this, arguments));
+    }
+
+    (0, _createClass3.default)(App, [{
+        key: 'render',
+        value: function render() {
+            return _react2.default.createElement(
+                'div',
+                null,
+                this.props.children
+            );
+        }
+    }]);
+    return App;
+}(_react2.default.Component);
+
+App.propTypes = {
+    authActions: _react.PropTypes.object.isRequired,
+    authState: _react.PropTypes.object.isRequired
+};
+
+function mapStateToProps(state) {
+    return {
+        authState: state.authState
+    };
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+        authActions: (0, _redux.bindActionCreators)(authActions, dispatch)
+    };
+}
+
+exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(App);
+module.exports = exports['default'];
 
 },{"./../actions/auth":1,"./../etc/store":8,"babel-runtime/core-js/object/get-prototype-of":16,"babel-runtime/helpers/classCallCheck":20,"babel-runtime/helpers/createClass":21,"babel-runtime/helpers/inherits":23,"babel-runtime/helpers/possibleConstructorReturn":24,"react":385,"react-redux":284,"react-router":333,"redux":397}],7:[function(require,module,exports){
-"use strict";function _interopRequireDefault(e){return e&&e.__esModule?e:{default:e}}Object.defineProperty(exports,"__esModule",{value:!0}),exports.fetch=void 0;var _stringify=require("babel-runtime/core-js/json/stringify"),_stringify2=_interopRequireDefault(_stringify),_store=require("./store"),_store2=_interopRequireDefault(_store),_isomorphicFetch=require("isomorphic-fetch"),_isomorphicFetch2=_interopRequireDefault(_isomorphicFetch),_reactRouter=require("react-router"),_reactReduxToastr=require("react-redux-toastr");require("es6-promise").polyfill();var API_URL="/api/",fetch=exports.fetch=function(e){var r=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{},t=_store2.default.get("auth-token"),o={"Content-Type":"application/json"};t&&(o["x-access-token"]=t);var s=r.body||null,u={headers:o};return s&&(u.body=(0,_stringify2.default)(s),u.method="POST"),(0,_isomorphicFetch2.default)(""+API_URL+e,u).then(function(e){return e.json().then(function(r){return{status:e.status,response:r}})}).then(function(e){if(500==e.status)throw new Error(e.response.data.error);if(403==e.status)return _reactRouter.browserHistory.push("/"),_store2.default.clear(),_reactReduxToastr.toastr.error("Sorry",e.response.data.error);var r=e.response,t=r.data;return t.user&&t.user.token&&_store2.default.set("auth-token",t.user.token),400==e.status?t||{}:t||{}}).catch(function(e){throw console.error(e),_reactReduxToastr.toastr.error("Sorry","Something bad happened"),new Error(e)})};
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.fetch = undefined;
+
+var _stringify = require('babel-runtime/core-js/json/stringify');
+
+var _stringify2 = _interopRequireDefault(_stringify);
+
+var _store = require('./store');
+
+var _store2 = _interopRequireDefault(_store);
+
+var _isomorphicFetch = require('isomorphic-fetch');
+
+var _isomorphicFetch2 = _interopRequireDefault(_isomorphicFetch);
+
+var _reactRouter = require('react-router');
+
+var _reactReduxToastr = require('react-redux-toastr');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+require('es6-promise').polyfill();
+
+
+var API_URL = '/api/';
+
+var fetch = exports.fetch = function fetch(url) {
+    var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+    var token = _store2.default.get('auth-token'),
+        headers = {
+        'Content-Type': 'application/json'
+    };
+    if (token) {
+        headers['x-access-token'] = token;
+    }
+
+    var body = opts.body || null;
+
+    var params = {
+        headers: headers
+    };
+
+    if (body) {
+        params.body = (0, _stringify2.default)(body);
+        params.method = 'POST';
+    }
+
+    return (0, _isomorphicFetch2.default)('' + API_URL + url, params).then(function (response) {
+        return response.json().then(function (json) {
+            return {
+                status: response.status,
+                response: json
+            };
+        });
+    }).then(function (res) {
+        if (res.status == 500) {
+            throw new Error(res.response.data.error);
+        }
+        if (res.status == 403) {
+            _reactRouter.browserHistory.push('/');
+            _store2.default.clear();
+            return _reactReduxToastr.toastr.error('Sorry', res.response.data.error);
+        }
+        var response = res.response;
+        var data = response.data;
+
+        if (data.user && data.user.token) {
+            _store2.default.set('auth-token', data.user.token);
+        }
+        if (res.status == 400) {
+            return data || {};
+        }
+        return data || {};
+    }).catch(function (error) {
+        console.error(error);
+        _reactReduxToastr.toastr.error('Sorry', 'Something bad happened');
+        throw new Error(error);
+    });
+};
 
 },{"./store":8,"babel-runtime/core-js/json/stringify":12,"es6-promise":110,"isomorphic-fetch":138,"react-redux-toastr":278,"react-router":333}],8:[function(require,module,exports){
-"use strict";Object.defineProperty(exports,"__esModule",{value:!0});var Cookies={set:function(e,t){var o=arguments.length>2&&void 0!==arguments[2]?arguments[2]:30,r="";if(o){var n=new Date;n.setTime(n.getTime()+24*o*60*60*1e3),r="; expires="+n.toGMTString()}document.cookie=e+"="+t+r+"; path=/"},get:function(e){for(var t=e+"=",o=document.cookie.split(";"),r=0;r<o.length;r++){for(var n=o[r];" "==n.charAt(0);)n=n.substring(1,n.length);if(0==n.indexOf(t))return n.substring(t.length,n.length)}return null},clear:function(){document.cookie.split(";").forEach(function(e){document.cookie=e.replace(/^ +/,"").replace(/=.*/,"=;expires="+(new Date).toUTCString()+";path=/")})}};exports.default=Cookies,module.exports=exports.default;
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+var Cookies = {
+
+	/**
+  * Will create a cookie in the browser
+  * @param  {String} name - Name of the cookie
+  * @param  {String} value - Value of the cookie
+  * @param  {Int} days - Days to store cookie
+  */
+	set: function set(name, value) {
+		var days = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 30;
+
+		var expires = '';
+		if (days) {
+			var date = new Date();
+			date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+			expires = "; expires=" + date.toGMTString();
+		}
+
+		document.cookie = name + "=" + value + expires + "; path=/";
+	},
+
+
+	/**
+  * Will return the value of a cookie for a given name
+  * @param  {String} name - the name of the cookie to get the value for
+  */
+	get: function get(name) {
+		var nameEQ = name + "=";
+		var ca = document.cookie.split(';');
+		for (var i = 0; i < ca.length; i++) {
+			var c = ca[i];
+			while (c.charAt(0) == ' ') {
+				c = c.substring(1, c.length);
+			}if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+		}
+		return null;
+	},
+	clear: function clear() {
+		document.cookie.split(";").forEach(function (c) {
+			document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+		});
+	}
+};
+
+exports.default = Cookies;
+module.exports = exports["default"];
 
 },{}],9:[function(require,module,exports){
-"use strict";function _interopRequireDefault(e){return e&&e.__esModule?e:{default:e}}var _extends2=require("babel-runtime/helpers/extends"),_extends3=_interopRequireDefault(_extends2),_react=require("react"),_react2=_interopRequireDefault(_react),_reactDom=require("react-dom"),_reactDom2=_interopRequireDefault(_reactDom),_redux=require("redux"),_reduxThunk=require("redux-thunk"),_reduxThunk2=_interopRequireDefault(_reduxThunk),_reduxLogger=require("redux-logger"),_reduxLogger2=_interopRequireDefault(_reduxLogger),_reactRedux=require("react-redux"),_reactRouter=require("react-router"),_reactRouterRedux=require("react-router-redux"),_reactReduxToastr=require("react-redux-toastr"),_reactReduxToastr2=_interopRequireDefault(_reactReduxToastr),_reducers=require("./reducers"),_reducers2=_interopRequireDefault(_reducers),_store=require("store"),_store2=_interopRequireDefault(_store),_app=require("./containers/app.jsx"),_app2=_interopRequireDefault(_app),_index=require("./components/dashboard/index.jsx"),_index2=_interopRequireDefault(_index),_index3=require("./components/home/index.jsx"),_index4=_interopRequireDefault(_index3),_=require("./components/404.jsx"),_2=_interopRequireDefault(_),loggerMiddleware=(0,_reduxLogger2.default)(),reducer=(0,_redux.combineReducers)((0,_extends3.default)({},_reducers2.default,{routing:_reactRouterRedux.routerReducer,toastr:_reactReduxToastr.reducer})),getStoreArgs=function(){return"production"==config.NODE_ENV?(0,_redux.compose)((0,_redux.applyMiddleware)(_reduxThunk2.default,(0,_reactRouterRedux.routerMiddleware)(_reactRouter.browserHistory))):(0,_redux.compose)((0,_redux.applyMiddleware)(_reduxThunk2.default,loggerMiddleware,(0,_reactRouterRedux.routerMiddleware)(_reactRouter.browserHistory)))},store=(0,_redux.createStore)(reducer,getStoreArgs()),history=(0,_reactRouterRedux.syncHistoryWithStore)(_reactRouter.browserHistory,store);history.listen(function(e){"production"==config.NODE_ENV&&ga&&ga.pageview&&ga.pageview(e.pathname)});var requireAuth=function(e,r){var t=store.getState().authState.logged_in;t||r({pathname:"/",state:{nextPathname:e.location.pathname}})},routes={path:"/",component:_app2.default,indexRoute:{component:_index4.default},childRoutes:[{path:"dashboard",component:_index2.default,onEnter:requireAuth},{path:"*",component:_2.default}]};_reactDom2.default.render(_react2.default.createElement(_reactRedux.Provider,{store:store},_react2.default.createElement("div",null,_react2.default.createElement(_reactRouter.Router,{routes:routes,history:history}),_react2.default.createElement(_reactReduxToastr2.default,{timeOut:4e3,newestOnTop:!1,position:"top-right"}))),document.getElementById("app"));
+'use strict';
+
+var _extends2 = require('babel-runtime/helpers/extends');
+
+var _extends3 = _interopRequireDefault(_extends2);
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactDom = require('react-dom');
+
+var _reactDom2 = _interopRequireDefault(_reactDom);
+
+var _redux = require('redux');
+
+var _reduxThunk = require('redux-thunk');
+
+var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
+
+var _reduxLogger = require('redux-logger');
+
+var _reduxLogger2 = _interopRequireDefault(_reduxLogger);
+
+var _reactRedux = require('react-redux');
+
+var _reactRouter = require('react-router');
+
+var _reactRouterRedux = require('react-router-redux');
+
+var _reactReduxToastr = require('react-redux-toastr');
+
+var _reactReduxToastr2 = _interopRequireDefault(_reactReduxToastr);
+
+var _reducers = require('./reducers');
+
+var _reducers2 = _interopRequireDefault(_reducers);
+
+var _store = require('store');
+
+var _store2 = _interopRequireDefault(_store);
+
+var _app = require('./containers/app.jsx');
+
+var _app2 = _interopRequireDefault(_app);
+
+var _index = require('./components/dashboard/index.jsx');
+
+var _index2 = _interopRequireDefault(_index);
+
+var _index3 = require('./components/home/index.jsx');
+
+var _index4 = _interopRequireDefault(_index3);
+
+var _ = require('./components/404.jsx');
+
+var _2 = _interopRequireDefault(_);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var loggerMiddleware = (0, _reduxLogger2.default)();
+
+var reducer = (0, _redux.combineReducers)((0, _extends3.default)({}, _reducers2.default, {
+    routing: _reactRouterRedux.routerReducer,
+    toastr: _reactReduxToastr.reducer
+}));
+
+var getStoreArgs = function getStoreArgs() {
+    if (config.NODE_ENV == 'production') {
+        return (0, _redux.compose)((0, _redux.applyMiddleware)(_reduxThunk2.default, (0, _reactRouterRedux.routerMiddleware)(_reactRouter.browserHistory)));
+    }
+    return (0, _redux.compose)((0, _redux.applyMiddleware)(_reduxThunk2.default, loggerMiddleware, (0, _reactRouterRedux.routerMiddleware)(_reactRouter.browserHistory)));
+};
+
+var store = (0, _redux.createStore)(reducer, getStoreArgs());
+var history = (0, _reactRouterRedux.syncHistoryWithStore)(_reactRouter.browserHistory, store);
+
+history.listen(function (location) {
+    if (config.NODE_ENV == 'production') {
+        ga && ga.pageview && ga.pageview(location.pathname);
+    }
+});
+
+var requireAuth = function requireAuth(nextState, replace) {
+    var isLoggedIn = store.getState().authState.logged_in;
+
+    if (!isLoggedIn) {
+        replace({
+            pathname: '/',
+            state: {
+                nextPathname: nextState.location.pathname
+            }
+        });
+    }
+};
+
+var routes = {
+    path: '/',
+    component: _app2.default,
+    indexRoute: {
+        component: _index4.default
+    },
+    childRoutes: [{
+        path: 'dashboard',
+        component: _index2.default,
+        onEnter: requireAuth
+    }, {
+        path: '*',
+        component: _2.default
+    }]
+};
+
+_reactDom2.default.render(_react2.default.createElement(
+    _reactRedux.Provider,
+    { store: store },
+    _react2.default.createElement(
+        'div',
+        null,
+        _react2.default.createElement(_reactRouter.Router, { routes: routes, history: history }),
+        _react2.default.createElement(_reactReduxToastr2.default, { timeOut: 4000, newestOnTop: false, position: 'top-right' })
+    )
+), document.getElementById('app'));
 
 },{"./components/404.jsx":2,"./components/dashboard/index.jsx":3,"./components/home/index.jsx":4,"./containers/app.jsx":6,"./reducers":11,"babel-runtime/helpers/extends":22,"react":385,"react-dom":143,"react-redux":284,"react-redux-toastr":278,"react-router":333,"react-router-redux":300,"redux":397,"redux-logger":390,"redux-thunk":391,"store":409}],10:[function(require,module,exports){
-"use strict";function _interopRequireDefault(e){return e&&e.__esModule?e:{default:e}}function authState(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:initialState,t=arguments[1];switch(t.type){case _actionTypes.LOGIN_INIT:return(0,_extends3.default)({},e,{logging_in:!0});case _actionTypes.LOGIN_FAILED:return(0,_extends3.default)({},e,{logging_in:!1});case _actionTypes.LOGGED_IN:return(0,_extends3.default)({},e,{logged_in:!0,logging_in:!1,current_user:t.current_user});case _actionTypes.SAVING_SETTINGS:return(0,_extends3.default)({},e,{saving_settings:!0});case _actionTypes.SAVED_SETTINGS:return(0,_extends3.default)({},e,{saving_settings:!1,current_user:t.current_user});case _actionTypes.SAVE_SETTINGS_ERRORS:return(0,_extends3.default)({},e,{saving_settings:!1,save_settings_errors:t.errors});case _actionTypes.UPGRADING:return(0,_extends3.default)({},e,{upgrading:!0});case _actionTypes.UPGRADED:return(0,_extends3.default)({},e,{current_user:t.current_user,upgrading:!1});case _actionTypes.UPGRADE_ERROR:return(0,_extends3.default)({},e,{upgrading:!1,upgrade_error:t.error});default:return e}}Object.defineProperty(exports,"__esModule",{value:!0});var _extends2=require("babel-runtime/helpers/extends"),_extends3=_interopRequireDefault(_extends2);exports.default=authState;var _actionTypes=require("../constants/action-types"),_store=require("./../etc/store"),_store2=_interopRequireDefault(_store),initialState={logged_in:!!config.LOGGED_IN,logging_in:!1,current_user:config.LOGGED_IN||null,upgrade_error:{},upgrading:!1,saving_settings:!1,save_settings_errors:{}};module.exports=exports.default;
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _extends2 = require('babel-runtime/helpers/extends');
+
+var _extends3 = _interopRequireDefault(_extends2);
+
+exports.default = authState;
+
+var _actionTypes = require('../constants/action-types');
+
+var _store = require('./../etc/store');
+
+var _store2 = _interopRequireDefault(_store);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var initialState = {
+    logged_in: !!config.LOGGED_IN,
+    logging_in: false,
+    current_user: config.LOGGED_IN || null,
+    upgrade_error: {},
+    upgrading: false,
+    saving_settings: false,
+    save_settings_errors: {}
+};
+
+function authState() {
+    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : initialState;
+    var action = arguments[1];
+
+    switch (action.type) {
+        case _actionTypes.LOGIN_INIT:
+            return (0, _extends3.default)({}, state, {
+                logging_in: true
+            });
+        case _actionTypes.LOGIN_FAILED:
+            return (0, _extends3.default)({}, state, {
+                logging_in: false
+            });
+        case _actionTypes.LOGGED_IN:
+            return (0, _extends3.default)({}, state, {
+                logged_in: true,
+                logging_in: false,
+                current_user: action.current_user
+            });
+        case _actionTypes.SAVING_SETTINGS:
+            return (0, _extends3.default)({}, state, {
+                saving_settings: true
+            });
+        case _actionTypes.SAVED_SETTINGS:
+            return (0, _extends3.default)({}, state, {
+                saving_settings: false,
+                current_user: action.current_user
+            });
+        case _actionTypes.SAVE_SETTINGS_ERRORS:
+            return (0, _extends3.default)({}, state, {
+                saving_settings: false,
+                save_settings_errors: action.errors
+            });
+        case _actionTypes.UPGRADING:
+            return (0, _extends3.default)({}, state, {
+                upgrading: true
+            });
+        case _actionTypes.UPGRADED:
+            return (0, _extends3.default)({}, state, {
+                current_user: action.current_user,
+                upgrading: false
+            });
+        case _actionTypes.UPGRADE_ERROR:
+            return (0, _extends3.default)({}, state, {
+                upgrading: false,
+                upgrade_error: action.error
+            });
+        default:
+            return state;
+    }
+}
+module.exports = exports['default'];
 
 },{"../constants/action-types":5,"./../etc/store":8,"babel-runtime/helpers/extends":22}],11:[function(require,module,exports){
-"use strict";function _interopRequireDefault(e){return e&&e.__esModule?e:{default:e}}Object.defineProperty(exports,"__esModule",{value:!0});var _auth=require("./auth"),_auth2=_interopRequireDefault(_auth),reducers={authState:_auth2.default};exports.default=reducers,module.exports=exports.default;
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _auth = require('./auth');
+
+var _auth2 = _interopRequireDefault(_auth);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var reducers = {
+    authState: _auth2.default
+};
+
+exports.default = reducers;
+module.exports = exports['default'];
 
 },{"./auth":10}],12:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/json/stringify"), __esModule: true };

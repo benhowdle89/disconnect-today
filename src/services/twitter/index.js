@@ -1,4 +1,5 @@
 import Twitter from 'node-twitter-api'
+import { logger } from './../../etc/logger'
 
 const callback = process.env.NODE_ENV == 'production' ? 'https://disconnect.today/api/twitter-callback' : 'http://localhost:5000/api/twitter-callback'
 
@@ -18,6 +19,10 @@ class TwitterService {
             this.connection().direct_messages("", {
                 count: 200
             }, accessToken, accessTokenSecret, (error, data, response) => {
+                if(error) {
+                    logger.error('Twitter error', error)
+                    return resolve([])
+                }
                 resolve(data.map(dm => {
                     return {
                         from: {
@@ -39,8 +44,13 @@ class TwitterService {
             this.connection().getTimeline("mentions", {
                 count: 200
             }, accessToken, accessTokenSecret, (error, data, response) => {
+                if(error) {
+                    logger.error('Twitter error', error)
+                    return resolve([])
+                }
                 resolve(data.map(mention => {
                     return {
+                        id: mention.id_str,
                         from: {
                             name: mention.user.screen_name,
                             avatar: mention.user.profile_image_url

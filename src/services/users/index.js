@@ -55,7 +55,15 @@ class Users {
         let user
         const existing = await this.getByTwitterUserId(id_str)
         if(existing) {
-            user = existing
+            await this.db.update({
+                twitteroAuthToken: oauthToken,
+                twitteroAuthTokenSecret: oauthTokenSecret
+            }, {
+                where: {
+                    twitterUserId: id_str
+                }
+            })
+            user = await this.getByTwitterUserId(id_str)
         } else {
             try {
                 user = await this.db.create({
