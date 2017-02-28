@@ -16,7 +16,7 @@ const styles = {
 }
 
 const titleStyle = {
-    color: '#DA4177',
+    color: '#E81B00',
     fontSize: '20px',
     marginBottom: '20px',
     fontWeight: 'bold',
@@ -34,7 +34,7 @@ const subtitleStyle = {
 
 const css = `
     body { line-height: 1.65; }
-    a { font-family: sans-serif; color: #DA4177; font-weight: bold; }
+    a { font-family: sans-serif; color: #E81B00; font-weight: bold; }
     hr { background-color: #FFE952; height: 3px; border: none; margin: 40px 0; }
     span { line-height: 1.65 !important; }
     table { float: none !important; }

@@ -39,7 +39,7 @@ var styles = {
 };
 
 var titleStyle = {
-    color: '#DA4177',
+    color: '#E81B00',
     fontSize: '20px',
     marginBottom: '20px',
     fontWeight: 'bold',
@@ -55,7 +55,7 @@ var subtitleStyle = {
     marginTop: '30px'
 };
 
-var css = '\n    body { line-height: 1.65; }\n    a { font-family: sans-serif; color: #DA4177; font-weight: bold; }\n    hr { background-color: #FFE952; height: 3px; border: none; margin: 40px 0; }\n    span { line-height: 1.65 !important; }\n    table { float: none !important; }\n'.trim();
+var css = '\n    body { line-height: 1.65; }\n    a { font-family: sans-serif; color: #E81B00; font-weight: bold; }\n    hr { background-color: #FFE952; height: 3px; border: none; margin: 40px 0; }\n    span { line-height: 1.65 !important; }\n    table { float: none !important; }\n'.trim();
 
 var emailHTML = function emailHTML(_ref) {
     var mentions = _ref.mentions,

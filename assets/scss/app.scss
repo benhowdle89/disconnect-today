@@ -43,7 +43,7 @@ h1, h2, h3 {
         text-transform: uppercase;
     }
     .second {
-        margin-left: -3px;
+        margin-left: -16px;
     }
 }
 
@@ -101,4 +101,13 @@ input[type="email"] {
     fieldset {
         border: 5px solid #222;
     }
+}
+
+ul {
+  list-style-type: none;
+  li {
+      span {
+          margin-right: 0.5rem;
+      }
+  }
 }

@@ -372,7 +372,7 @@ h1, h2, h3 {
   .logo .first {
     text-transform: uppercase; }
   .logo .second {
-    margin-left: -3px; }
+    margin-left: -16px; }
 
 .button {
   border-bottom: 5px solid #E81B00;
@@ -416,5 +416,10 @@ input[type="email"] {
 
 .settings-form fieldset {
   border: 5px solid #222; }
+
+ul {
+  list-style-type: none; }
+  ul li span {
+    margin-right: 0.5rem; }
 
 /*# sourceMappingURL=app.css.map */
