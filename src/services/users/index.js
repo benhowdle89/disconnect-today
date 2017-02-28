@@ -49,6 +49,16 @@ class Users {
         })
         return await this.getById(id)
     }
+    async activateAccount(id, chargeId) {
+        const updated = await this.db.update({
+            stripeChargeId: chargeId
+        }, {
+            where: {
+                id
+            }
+        })
+        return await this.getById(id)
+    }
     async createUser({
         screen_name,
         id_str,

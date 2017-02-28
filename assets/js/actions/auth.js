@@ -74,14 +74,15 @@ export function saveSettings({
     }
 }
 
-export function upgrade(stripeToken) {
+export function upgrade(stripeToken, email) {
     return (dispatch, getState) => {
 
         dispatch(upgradeInit())
 
         return fetch('users/upgrade', {
                 body: {
-                    stripe_token_id: stripeToken
+                    stripe_token_id: stripeToken,
+                    email
                 }
             })
             .then(json => {

@@ -8,6 +8,7 @@ import moment from 'moment'
 import * as authActions from './../../actions/auth'
 
 import Loading from './../loading.jsx'
+import Stripe from './stripe.jsx'
 
 class Dashboard extends React.Component {
 
@@ -16,7 +17,8 @@ class Dashboard extends React.Component {
         this.state = {
             email: this.props.authState.current_user.email,
             frequency: this.props.authState.current_user.frequency,
-            saveSettingsErrors: this.props.authState.save_settings_errors
+            saveSettingsErrors: this.props.authState.save_settings_errors,
+            upgradeError: this.props.authState.upgrade_error
         }
     }
 
@@ -24,6 +26,11 @@ class Dashboard extends React.Component {
         if(nextProps.authState.save_settings_errors) {
             this.setState({
                 saveSettingsErrors: nextProps.authState.save_settings_errors
+            })
+        }
+        if(nextProps.authState.upgrade_error) {
+            this.setState({
+                upgradeError: nextProps.authState.upgrade_error
             })
         }
     }
@@ -56,7 +63,9 @@ class Dashboard extends React.Component {
     }
 
     handleStripe = response => {
-
+        if(response.id) {
+            return this.props.authActions.upgrade(response.id, response.email)
+        }
     }
 
     getStatus() {
@@ -72,7 +81,8 @@ class Dashboard extends React.Component {
 
     render() {
         const user = this.props.authState.current_user
-        const errors = this.state.saveSettingsErrors
+        const saveErrors = this.state.saveSettingsErrors
+        const upgradeError = this.state.upgradeError
         const isLoading = this.props.authState.saving_settings || this.props.authState.upgrading
         const fullUser = this.props.authState.current_user.isFullUser
         return (
@@ -83,8 +93,8 @@ class Dashboard extends React.Component {
                     fullUser && this.handleSave()
                 }}>
                     {
-                        !!(errors) && (
-                            <p>{ errors }</p>
+                        !!(saveErrors || upgradeError) && (
+                            <p>{ saveErrors || upgradeError }</p>
                         )
                     }
                     <p>[{ this.getStatus() }] I want to receive emails to <input type="text" placeholder="123@abc.com" value={this.state.email} onChange={event => {
@@ -103,6 +113,11 @@ class Dashboard extends React.Component {
                         <Loading column>
                             { this.getLoadingMessage() }
                         </Loading>
+                    )
+                }
+                {
+                    !fullUser && (
+                        <Stripe onToken={this.handleStripe} />
                     )
                 }
                 {
