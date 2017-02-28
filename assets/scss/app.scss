@@ -1,0 +1,104 @@
+$red: #E81B00;
+
+@import "redux_toastr";
+
+* {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  vertical-align: baseline;
+  box-sizing: border-box; }
+
+html {
+  font-size: 22px; }
+
+html,
+body {
+  height: 100%; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  background: #e5e5e5;
+  color: #222;
+  line-height: 1.75;
+  font-weight: 400;
+}
+
+img {
+  max-width: 100%;
+  display: block; }
+
+a {
+  color: inherit;
+  text-decoration: none; }
+
+h1, h2, h3 {
+    font-family: 'Archivo Black', sans-serif;
+}
+
+.logo {
+    font-family: 'Archivo Black', sans-serif;
+    .first {
+        text-transform: uppercase;
+    }
+    .second {
+        margin-left: -3px;
+    }
+}
+
+.button {
+    border-bottom: 5px solid $red;
+    font-weight: bold;
+    padding-bottom: 5px;
+    font-size: inherit;
+    background: transparent;
+    cursor: pointer;
+    &:focus {
+        outline: none;
+    }
+}
+
+input {
+    font-size: inherit;
+    padding: 3px 6px;
+    border-bottom: 3px solid #222;
+    background: transparent;
+    &:focus {
+        border-bottom: 3px solid $red;
+        outline: none;
+    }
+}
+
+select {
+    font-size: inherit;
+    background: transparent;
+    padding: 12px 6px;
+    &:focus {
+        outline: none;
+    }
+}
+
+input[type="email"] {
+    min-width: 280px;
+}
+
+.error {
+    background: $red;
+    color: #fff;
+    font-weight: bold;
+}
+
+.footer {
+    border-top: 5px solid #222;
+}
+
+.disabled {
+    opacity: 0.6;
+}
+
+.settings-form {
+    fieldset {
+        border: 5px solid #222;
+    }
+}

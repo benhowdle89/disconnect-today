@@ -1,12 +1,13 @@
 {
   "restartable": "rs",
   "ignore": [
+    "dist/**/*",
     ".git",
     "node_modules/**/node_modules"
   ],
   "verbose": true,
   "execMap": {
-    "js": "node dist/server.js --harmony_default_parameters"
+    "js": "npm run build-server && node dist/server.js"
   },
   "delay": 1000,
   "ext": "js json"

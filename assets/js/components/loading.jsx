@@ -6,7 +6,6 @@ const Loading = ({ children, column = false, style = {} }) => {
         alignItems: 'center',
         justifyContent: 'center',
         verticalAlign: 'middle',
-        margin: '0 6px',
         ...style
     }
     let childStyle = {}
@@ -16,7 +15,7 @@ const Loading = ({ children, column = false, style = {} }) => {
         childStyle.marginBottom = '1em'
     }
     return (
-        <div style={containerStyle}>
+        <div style={containerStyle} className="my2">
             <div style={childStyle}>
                 <svg width='36px' height='36px' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="uil-ring">
                     <rect x="0" y="0" width="100" height="100" fill="none" class="bk"></rect>

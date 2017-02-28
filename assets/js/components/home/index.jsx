@@ -9,15 +9,15 @@ class Home extends React.Component {
     render() {
         const loggedIn = this.props.authState.logged_in
         return (
-            <div>                
+            <div className="center">
                 {
                     loggedIn && (
-                        <Link to="/dashboard">Dashboard</Link>
+                        <Link className="button" to="/dashboard">Dashboard</Link>
                     )
                 }
                 {
                     !loggedIn && (
-                        <a href="/api/twitter-connect">Sign in with Twitter</a>
+                        <a className="button" href="/api/twitter-connect">Sign in with Twitter</a>
                     )
                 }
             </div>

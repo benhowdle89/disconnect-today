@@ -15,7 +15,7 @@ const onHomepage = pathname => pathname == '/'
 class App extends React.Component {
 
     render() {
-        return <div>
+        return <div className="max-width-2 mx-auto p2">
             <Header />
             {
                 this.props.children

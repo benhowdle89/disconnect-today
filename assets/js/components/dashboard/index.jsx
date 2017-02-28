@@ -69,7 +69,8 @@ class Dashboard extends React.Component {
     }
 
     getStatus() {
-        return this.props.authState.current_user.isFullUser ? 'active' : 'inactive'
+        const accountClass = this.props.authState.current_user.isFullUser ? 'active' : 'inactive'
+        return <span className={`account-${ accountClass }`} />
     }
 
     getLoadingMessage() {
@@ -87,17 +88,19 @@ class Dashboard extends React.Component {
         const fullUser = this.props.authState.current_user.isFullUser
         return (
             <div>
-                <form action="" onSubmit={event => {
+                <form className="mb3 settings-form" action="" onSubmit={event => {
                     event.preventDefault()
                     fullUser && this.handleSave()
                 }}>
-                    <fieldset disabled={!fullUser}>
+                    <fieldset className={`p2 ${!fullUser && 'disabled'}`} disabled={!fullUser}>
                         {
                             !!(saveErrors || upgradeError) && (
-                                <p>{ saveErrors || upgradeError }</p>
+                                <p className="error mb2 py1 px2">{ saveErrors || upgradeError }</p>
                             )
                         }
-                        <p>[{ this.getStatus() }] I want to receive emails to <input type="text" placeholder="123@abc.com" value={this.state.email} onChange={event => {
+                        <p className="mb3 center" style={{
+                            lineHeight: '2rem'
+                        }}>{ this.getStatus() } I want to receive emails to <input type="email" placeholder="123@abc.com" value={this.state.email} onChange={event => {
                             this.handleEmailChange(event.target.value)
                         }} /> every <select value={ this.state.frequency } onChange={event => {
                             this.handleFrequencyChange(event.target.value)
@@ -105,8 +108,8 @@ class Dashboard extends React.Component {
                             {
                                 ['day', '2_days', 'week'].map(f => <option key={ f } value={ f }>{ f.replace(/_/, ' ') }</option>)
                             }
-                        </select> with a digest of my @mentions and DMs</p>
-                        <button type="submit" disabled={ isLoading }>Save</button>
+                        </select> with a digest of my @mentions and DMs.</p>
+                        <button className="button right" type="submit" disabled={ isLoading }>Save</button>
                     </fieldset>
                 </form>
                 {
@@ -117,7 +120,7 @@ class Dashboard extends React.Component {
                     )
                 }
                 {
-                    !fullUser && (
+                    !fullUser && !isLoading && (
                         <Stripe onToken={this.handleStripe} />
                     )
                 }
