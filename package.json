@@ -15,7 +15,7 @@
     "build-js": "browserify assets/js/index.jsx -t babelify -t brfs -t uglifyify --outfile src/public/js/index.js",
     "watch-css": "node-sass -w assets/scss/app.scss src/public/css/app.css --source-map true",
     "build-css": "node-sass assets/scss/app.scss src/public/css/app.css --source-map true",
-    "build": "npm run build-js & npm run build-css & babel src --out-dir dist --copy-files"
+    "build": "npm run build-js && npm run build-css && babel src --out-dir dist --copy-files"
   },
   "repository": {
     "type": "git",
