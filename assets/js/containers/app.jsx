@@ -5,7 +5,8 @@ import {browserHistory} from 'react-router'
 
 import * as authActions from './../actions/auth'
 
-import store from './../etc/store'
+import Header from './../components/header.jsx'
+import Footer from './../components/footer.jsx'
 
 const inApp = pathname => ['dashboard'].some(r => pathname.match(new RegExp(r)))
 
@@ -15,9 +16,11 @@ class App extends React.Component {
 
     render() {
         return <div>
+            <Header />
             {
                 this.props.children
             }
+            <Footer />
         </div>
     }
 }

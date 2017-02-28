@@ -87,7 +87,6 @@ class Dashboard extends React.Component {
         const fullUser = this.props.authState.current_user.isFullUser
         return (
             <div>
-                <h1>Disconnect Today</h1>
                 <form action="" onSubmit={event => {
                     event.preventDefault()
                     fullUser && this.handleSave()

@@ -7,10 +7,19 @@ import * as authActions from './../../actions/auth'
 
 class Home extends React.Component {
     render() {
+        const loggedIn = this.props.authState.logged_in
         return (
-            <div>
-                <h1>Disconnect Today</h1>
-                <a href="/api/twitter-connect">Sign in with Twitter</a>
+            <div>                
+                {
+                    loggedIn && (
+                        <Link to="/dashboard">Dashboard</Link>
+                    )
+                }
+                {
+                    !loggedIn && (
+                        <a href="/api/twitter-connect">Sign in with Twitter</a>
+                    )
+                }
             </div>
         )
     }
