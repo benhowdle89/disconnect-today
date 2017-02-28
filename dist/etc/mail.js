@@ -31,7 +31,6 @@ var send = function send(_ref) {
         dms: data.dms,
         frequency: data.frequency
     });
-    return console.log(html);
     _logger.logger.info('Sending email', to);
     var sendEmail = function sendEmail() {
         var params = {

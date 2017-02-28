@@ -91,7 +91,7 @@ export function upgrade(stripeToken, email) {
                 }
                 if(json.user){
                     dispatch(upgraded(json.user))
-                    toastr.success('Thanks', 'Your account has been activated. Enjoy your digest emails!')
+                    toastr.success('Thanks', 'Your account has been activated. Enjoy your digest emails! Remember to set your email address...')
                 }
             })
     }

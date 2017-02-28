@@ -20,7 +20,6 @@ let send = ({
         dms: data.dms,
         frequency: data.frequency
     })
-    return console.log(html)
     logger.info('Sending email', to)
     const sendEmail = () => {
         const params = {
