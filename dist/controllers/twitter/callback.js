@@ -31,7 +31,7 @@ var Twitter = _services2.default.Twitter,
 
 exports.default = function () {
     var _ref = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee3(req, res) {
-        var twitter, users, requestToken, verifier, requestSecret;
+        var twitter, users, requestToken, verifier, secretKey, requestSecret;
         return _regenerator2.default.wrap(function _callee3$(_context3) {
             while (1) {
                 switch (_context3.prev = _context3.next) {
@@ -40,7 +40,8 @@ exports.default = function () {
                         users = new Users();
                         requestToken = req.query.oauth_token;
                         verifier = req.query.oauth_verifier;
-                        requestSecret = _secret2.default.get('twitter-' + requestToken);
+                        secretKey = 'twitter-' + requestToken;
+                        requestSecret = _secret2.default.get(secretKey);
                         return _context3.abrupt('return', new _promise2.default(function (resolve) {
                             twitter.getAccessToken(requestToken, requestSecret, verifier, function () {
                                 var _ref2 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee2(error, accessToken, accessSecret) {
@@ -86,6 +87,8 @@ exports.default = function () {
 
                                                                         case 5:
                                                                             newUser = _context.sent;
+
+                                                                            _secret2.default.remove(secretKey);
                                                                             return _context.abrupt('return', resolve({
                                                                                 error: null,
                                                                                 data: {
@@ -93,7 +96,7 @@ exports.default = function () {
                                                                                 }
                                                                             }));
 
-                                                                        case 7:
+                                                                        case 8:
                                                                         case 'end':
                                                                             return _context.stop();
                                                                     }
@@ -120,7 +123,7 @@ exports.default = function () {
                             }());
                         }));
 
-                    case 6:
+                    case 7:
                     case 'end':
                         return _context3.stop();
                 }

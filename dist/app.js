@@ -139,7 +139,7 @@ app.use('*', function () {
 
                     case 3:
                         if (!url.match(/twitter-callback/)) {
-                            _context2.next = 9;
+                            _context2.next = 11;
                             break;
                         }
 
@@ -149,25 +149,33 @@ app.use('*', function () {
                     case 6:
                         result = _context2.sent;
 
+                        if (!result.error) {
+                            _context2.next = 9;
+                            break;
+                        }
+
+                        return _context2.abrupt('return', res.redirect('/'));
+
+                    case 9:
                         res.cookie('auth-token', result.data.user.token, {
                             expires: new Date(Date.now() + 9999999),
                             httpOnly: false
                         });
                         return _context2.abrupt('return', res.redirect('/dashboard'));
 
-                    case 9:
+                    case 11:
                         if (url.match(/api/)) {
-                            _context2.next = 12;
+                            _context2.next = 14;
                             break;
                         }
 
                         authToken = req.cookies['auth-token'] || null;
                         return _context2.abrupt('return', render(res, authToken, req));
 
-                    case 12:
+                    case 14:
                         return _context2.abrupt('return', (0, _router2.default)(req, res, next));
 
-                    case 13:
+                    case 15:
                     case 'end':
                         return _context2.stop();
                 }

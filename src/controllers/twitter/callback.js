@@ -8,7 +8,8 @@ export default async (req, res) => {
     const users = new Users()
     const requestToken = req.query.oauth_token
     const verifier = req.query.oauth_verifier
-    const requestSecret = secret.get(`twitter-${requestToken}`)
+    const secretKey = `twitter-${requestToken}`
+    const requestSecret = secret.get(secretKey)
     return new Promise((resolve) => {
         twitter.getAccessToken(requestToken, requestSecret, verifier, async (error, accessToken, accessSecret) => {
             if(error) {
@@ -29,6 +30,7 @@ export default async (req, res) => {
                     oauthToken: accessToken,
                     oauthTokenSecret: accessSecret
                 })
+                secret.remove(secretKey)
                 return resolve({
                     error: null,
                     data: {

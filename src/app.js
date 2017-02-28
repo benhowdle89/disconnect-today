@@ -58,6 +58,9 @@ app.use('*', async (req, res, next) => {
     }
     if(url.match(/twitter-callback/)) {
         const result = await TwitterCallback(req, res)
+        if(result.error) {
+            return res.redirect('/')
+        }
         res.cookie('auth-token', result.data.user.token, {
             expires: new Date(Date.now() + 9999999),
             httpOnly: false
