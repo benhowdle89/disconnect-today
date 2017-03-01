@@ -377,10 +377,12 @@ h1, h2, h3 {
 .button {
   border-bottom: 5px solid #E81B00;
   font-weight: bold;
-  padding-bottom: 2px;
   font-size: inherit;
   background: transparent;
   cursor: pointer; }
+  .button.primary {
+    background: #222;
+    color: #fff; }
   .button:focus {
     outline: none; }
 
@@ -396,7 +398,7 @@ input {
 select {
   font-size: inherit;
   background: transparent;
-  padding: 4px 6px;
+  padding: 4px 0;
   border-bottom: 3px solid #222;
   -webkit-appearance: none;
   border-radius: 0; }
@@ -424,5 +426,26 @@ ul {
   list-style-type: none; }
   ul li span {
     margin-right: 0.5rem; }
+
+.account-status {
+  border: 5px solid #222;
+  position: absolute;
+  top: -28px;
+  left: -54px;
+  color: #fff;
+  font-weight: bold;
+  display: block; }
+  .account-status.account-active {
+    background: #2ecc71; }
+  .account-status.account-inactive {
+    background: #E81B00; }
+
+@media screen and (max-width: 790px) {
+  .account-status {
+    position: relative;
+    top: 0;
+    left: 0;
+    margin-bottom: 2rem;
+    text-align: center; } }
 
 /*# sourceMappingURL=app.css.map */

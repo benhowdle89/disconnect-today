@@ -80,6 +80,13 @@ class Dashboard extends React.Component {
         return "Activating your account"
     }
 
+    getTab() {
+        const fullUser = this.props.authState.current_user.isFullUser
+        return <span className={`px1 account-status account-${fullUser ? 'active' : 'inactive'}`}>
+            { fullUser ? 'Active' : 'Inactive' }
+        </span>
+    }
+
     render() {
         const user = this.props.authState.current_user
         const saveErrors = this.state.saveSettingsErrors
@@ -90,9 +97,12 @@ class Dashboard extends React.Component {
             <div>
                 <form className="mb3 settings-form" action="" onSubmit={event => {
                     event.preventDefault()
-                    fullUser && this.handleSave()
+                    this.handleSave()
                 }}>
-                    <fieldset className={`p2 ${!fullUser && 'disabled'}`} disabled={!fullUser}>
+                    <fieldset className="p3 relative">
+                        {
+                            this.getTab()
+                        }
                         {
                             !!(saveErrors || upgradeError) && (
                                 <p className="error mb2 py1 px2">{ saveErrors || upgradeError }</p>
@@ -100,7 +110,7 @@ class Dashboard extends React.Component {
                         }
                         <p className="mb3 center" style={{
                             lineHeight: '2rem'
-                        }}>{ this.getStatus() } I want to receive emails to <input type="email" placeholder="123@abc.com" value={this.state.email} onChange={event => {
+                        }}>{ this.getStatus() } I want to receive emails to <input type="email" placeholder="m.scott@dundermifflin.com" value={this.state.email} onChange={event => {
                             this.handleEmailChange(event.target.value)
                         }} /> <select value={ this.state.frequency } onChange={event => {
                             this.handleFrequencyChange(event.target.value)
@@ -110,7 +120,7 @@ class Dashboard extends React.Component {
                             }
                         </select> with a digest of my @mentions and DMs.</p>
                         <div className="flex justify-center">
-                            <button className="button" type="submit" disabled={ isLoading }>Save</button>
+                            <button className="button" type="submit" disabled={ isLoading }>Save preferences</button>
                         </div>
                     </fieldset>
                 </form>
