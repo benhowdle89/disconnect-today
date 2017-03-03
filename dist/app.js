@@ -123,7 +123,7 @@ var render = function () {
 
 app.use('*', function () {
     var _ref2 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee2(req, res, next) {
-        var url, result, authToken;
+        var url, result, days, authToken;
         return _regenerator2.default.wrap(function _callee2$(_context2) {
             while (1) {
                 switch (_context2.prev = _context2.next) {
@@ -139,7 +139,7 @@ app.use('*', function () {
 
                     case 3:
                         if (!url.match(/twitter-callback/)) {
-                            _context2.next = 11;
+                            _context2.next = 12;
                             break;
                         }
 
@@ -157,25 +157,27 @@ app.use('*', function () {
                         return _context2.abrupt('return', res.redirect('/'));
 
                     case 9:
+                        days = 60;
+
                         res.cookie('auth-token', result.data.user.token, {
-                            expires: new Date(Date.now() + 9999999),
+                            expires: new Date(Date.now() + days * 24 * 60 * 60 * 1000),
                             httpOnly: false
                         });
                         return _context2.abrupt('return', res.redirect('/dashboard'));
 
-                    case 11:
+                    case 12:
                         if (url.match(/api/)) {
-                            _context2.next = 14;
+                            _context2.next = 15;
                             break;
                         }
 
                         authToken = req.cookies['auth-token'] || null;
                         return _context2.abrupt('return', render(res, authToken, req));
 
-                    case 14:
+                    case 15:
                         return _context2.abrupt('return', (0, _router2.default)(req, res, next));
 
-                    case 15:
+                    case 16:
                     case 'end':
                         return _context2.stop();
                 }

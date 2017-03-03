@@ -440,6 +440,10 @@ ul {
   .account-status.account-inactive {
     background: #E81B00; }
 
+.twitter-info {
+  font-size: 14px;
+  opacity: 0.5; }
+
 @media screen and (max-width: 790px) {
   .account-status {
     position: relative;

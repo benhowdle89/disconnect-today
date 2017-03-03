@@ -33,6 +33,7 @@ class Home extends React.Component {
                         <div>
                             <p className="bold">A one-off $5 payment activates your account for life.</p>
                             <p>Sound good? <a className="button" href="/api/twitter-connect">Sign in with Twitter</a></p>
+                            <p className="twitter-info mt4">* Disconnect Today requests a fair few permissions from your Twitter account. This is so it can read your DMs. We <span className="bold">never</span> post anything on your behalf. Promise.</p>
                         </div>
                     )
                 }

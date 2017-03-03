@@ -61,8 +61,9 @@ app.use('*', async (req, res, next) => {
         if(result.error) {
             return res.redirect('/')
         }
+        const days = 60
         res.cookie('auth-token', result.data.user.token, {
-            expires: new Date(Date.now() + 9999999),
+            expires: new Date(Date.now() + days*24*60*60*1000),
             httpOnly: false
         })
         return res.redirect('/dashboard')
