@@ -102,7 +102,8 @@ var Users = function () {
                                         },
                                         frequency: {
                                             $in: ['day', '2_days', 'week']
-                                        }
+                                        },
+                                        paused: false
                                     }
                                 });
 
@@ -160,7 +161,7 @@ var Users = function () {
     }, {
         key: 'updateSettings',
         value: function () {
-            var _ref4 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee4(id, email, frequency) {
+            var _ref4 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee4(id, email, frequency, paused) {
                 var updated;
                 return _regenerator2.default.wrap(function _callee4$(_context4) {
                     while (1) {
@@ -169,7 +170,8 @@ var Users = function () {
                                 _context4.next = 2;
                                 return this.db.update({
                                     email: email,
-                                    frequency: frequency
+                                    frequency: frequency,
+                                    paused: !!paused
                                 }, {
                                     where: {
                                         id: id
@@ -192,7 +194,7 @@ var Users = function () {
                 }, _callee4, this);
             }));
 
-            function updateSettings(_x3, _x4, _x5) {
+            function updateSettings(_x3, _x4, _x5, _x6) {
                 return _ref4.apply(this, arguments);
             }
 
@@ -232,7 +234,7 @@ var Users = function () {
                 }, _callee5, this);
             }));
 
-            function activateAccount(_x6, _x7) {
+            function activateAccount(_x7, _x8) {
                 return _ref5.apply(this, arguments);
             }
 
@@ -332,7 +334,7 @@ var Users = function () {
                 }, _callee6, this, [[12, 18]]);
             }));
 
-            function createUser(_x8) {
+            function createUser(_x9) {
                 return _ref6.apply(this, arguments);
             }
 

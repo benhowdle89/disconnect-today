@@ -50,7 +50,8 @@ export function upgradeErrors(error){
 
 export function saveSettings({
     email,
-    frequency
+    frequency,
+    paused
 }) {
     return (dispatch, getState) => {
 
@@ -59,7 +60,8 @@ export function saveSettings({
         return fetch('users/update', {
                 body: {
                     email,
-                    frequency
+                    frequency,
+                    paused
                 }
             })
             .then(json => {

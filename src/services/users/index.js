@@ -26,7 +26,8 @@ class Users {
                 },
                 frequency: {
                     $in: ['day', '2_days', 'week']
-                }
+                },
+                paused: false
             }
         })
     }
@@ -38,10 +39,11 @@ class Users {
         })
         return user
     }
-    async updateSettings(id, email, frequency) {
+    async updateSettings(id, email, frequency, paused) {
         const updated = await this.db.update({
             email,
-            frequency
+            frequency,
+            paused: !!(paused)
         }, {
             where: {
                 id

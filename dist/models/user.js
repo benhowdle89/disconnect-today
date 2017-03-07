@@ -26,6 +26,10 @@ module.exports = function (sequelize, DataTypes) {
         },
         lastFetchedFromTwitter: {
             type: DataTypes.DATE
+        },
+        paused: {
+            type: DataTypes.BOOLEAN,
+            default: false
         }
     }, {
         getterMethods: {

@@ -29,7 +29,8 @@ var update = function () {
     var _ref = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee(_ref2) {
         var user = _ref2.user,
             email = _ref2.email,
-            frequency = _ref2.frequency;
+            frequency = _ref2.frequency,
+            paused = _ref2.paused;
         var users, updatedUser;
         return _regenerator2.default.wrap(function _callee$(_context) {
             while (1) {
@@ -54,7 +55,7 @@ var update = function () {
 
                     case 5:
                         _context.next = 7;
-                        return users.updateSettings(user.id, email, frequency);
+                        return users.updateSettings(user.id, email, frequency, paused);
 
                     case 7:
                         updatedUser = _context.sent;

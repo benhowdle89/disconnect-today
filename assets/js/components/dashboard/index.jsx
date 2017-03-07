@@ -18,7 +18,8 @@ class Dashboard extends React.Component {
             email: this.props.authState.current_user.email,
             frequency: this.props.authState.current_user.frequency || 'day',
             saveSettingsErrors: this.props.authState.save_settings_errors,
-            upgradeError: this.props.authState.upgrade_error
+            upgradeError: this.props.authState.upgrade_error,
+            paused: this.props.authState.current_user.paused
         }
     }
 
@@ -47,6 +48,12 @@ class Dashboard extends React.Component {
         })
     }
 
+    handlePausedChange = paused => {
+        this.setState({
+            paused
+        })
+    }
+
     handleSave = () => {
         if(!this.state.email) {
             return this.props.authActions.saveSettingsErrors('Please fill in your email address')
@@ -58,7 +65,8 @@ class Dashboard extends React.Component {
 
         return this.props.authActions.saveSettings({
             email: this.state.email,
-            frequency: this.state.frequency
+            frequency: this.state.frequency,
+            paused: this.state.paused
         })
     }
 
@@ -119,6 +127,12 @@ class Dashboard extends React.Component {
                                 ['day', '2_days', 'week'].map(f => <option key={ f } value={ f }>every { f.replace(/_/, ' ') }</option>)
                             }
                         </select> with a digest of my @mentions and DMs.</p>
+                        <div className="mb3 flex items-center">
+                            <label htmlFor="paused">Pause my email digest</label>
+                            <input className="ml1" type="checkbox" name="paused" id="paused" checked={ this.state.paused } value={ this.state.paused } onChange={event => {
+                                this.handlePausedChange(event.target.checked)
+                            }} />
+                        </div>
                         <div className="flex justify-center">
                             <button className="button" type="submit" disabled={ isLoading }>Save preferences</button>
                         </div>
