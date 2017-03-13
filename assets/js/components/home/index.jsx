@@ -16,11 +16,16 @@ class Home extends React.Component {
                 </div>
 
                 <div className="sell mb2">
-                    <p>You could, but what if someone wants to hire you? <br />What if you're available for freelance work?<br/> It would be nice to see those messages. <br/>It would well and truly suck to miss those opportunities.</p>
+                    <p>You could, but what if someone wants to hire you?<br />What if you're available for freelance work?<br/>It would be nice to see those messages. <br/>It would well and truly suck to miss those opportunities.</p>
                 </div>
 
                 <div className="blurb mb3">
                     <p className="mb2">Disconnect Today sends you an email digest of your recent @mentions and DMs, no popular tweets or #moments, on a schedule that suits you.</p>
+                </div>
+
+                <div className="gallery flex flex-column">
+                    <img src="/img/preferences.png" alt=""/>
+                    <img src="/img/email.png" alt=""/>
                 </div>
 
                 {
@@ -31,7 +36,6 @@ class Home extends React.Component {
                 {
                     !loggedIn && (
                         <div>
-                            <p className="bold">A one-off $5 payment activates your account for life.</p>
                             <p>Sound good? <a className="button" href="/api/twitter-connect">Sign in with Twitter</a></p>
                             <p className="twitter-info mt4">* Disconnect Today requests a fair few permissions from your Twitter account. This is so it can read your DMs. We <span className="bold">never</span> post anything on your behalf. Promise.</p>
                         </div>
